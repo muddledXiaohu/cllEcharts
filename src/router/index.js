@@ -1,10 +1,16 @@
 
-import Vue from 'vue'   //引入Vue
-import Router from 'vue-router'  //引入vue-router
-import { constantRouterMap } from '@/config/router.config'
+import Vue from 'vue'
+import Router from 'vue-router'
+import { constantRouterMap, asyncRouterMap } from '@/config/router.config'
 
 
-Vue.use(Router)  //Vue全局使用Router
+// 相同路由报错
+const originalPush = Router.prototype.push
+Router.prototype.push = function push (location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
+}
+Vue.use(Router)  // Vue全局使用Router
 export default new Router({
-    routes: constantRouterMap
+    routes: constantRouterMap,asyncRouterMap
 })
