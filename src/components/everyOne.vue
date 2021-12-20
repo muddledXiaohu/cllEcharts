@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <a-layout>
-      <a-layout-sider v-model="collapsed" :trigger="null" collapsible>
+      <a-layout-sider v-model="collapsed" :trigger="null" collapsible :style="{ overflow: 'auto', height: '100vh' }">
         <!-- 侧边栏 -->
         <MyHeader :menu="false" :currentUser='arrs' />
       </a-layout-sider>
@@ -62,7 +62,21 @@ export default {
           {title: '开户申请', name: 'openAccount', key: '/user/openAccount'},
           {title: '账号', name: 'accountNumber', key: '/user/accountNumber'}
         ]},
-        {title: 'role', name: 'role', id: 3, key: '/user/role'},
+        {title: '账单管理', name: 'bill', id: 3, key: '/bill', children:[
+          {title: '客户月账单', name: 'MonthlyBill', key: '/bill/MonthlyBill'},
+          {title: '客户月核销账单', name: 'WriteOffMBill', key: '/bill/WriteOffMBill'},
+          {title: '客户回款', name: 'Collection', key: '/bill/Collection'},
+          {title: '开票管理', name: 'Invoicing', key: '/bill/Invoicing'},
+          {title: '通道月账单', name: 'passagewayMBill', key: '/bill/passagewayMBill'},
+          {title: '通道月核销账单', name: 'passagewayWriteOffMB', key: '/bill/passagewayWriteOffMB'}
+        ]},
+        {title: '通道管理', name: 'passageway', id: 4, key: '/passageway', children:[
+          {title: '通道商', name: 'merchant', key: '/passageway/merchant'},
+          {title: '通道保量', name: 'Conservation', key: '/passageway/Conservation'},
+          {title: '通道保量达标-可视化', name: 'ConservationEchats', key: '/passageway/ConservationEchats'}
+        ]},
+        {title: '客诉记录', name: 'ComplaintRecord', id: 5, key: '/operate/ComplaintRecord'},
+        {title: 'role', name: 'role', id: 6, key: '/user/role'},
         // {title: 'c', id: 3, key: 'user/roo'}
       ]
     };

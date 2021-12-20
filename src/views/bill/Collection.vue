@@ -1,5 +1,14 @@
 <template>
   <div>
+        <!-- columns table标题栏选择项 -->
+        <!-- selectedHeader标题栏已选项 -->
+        <!-- displayScroll是否显示左右滚动条 -->
+        <!-- condition 查询项 -->
+        <!-- Inline 查询绑定数据 -->
+        <!-- ButtonTB 查询重置按钮 -->
+        <!-- tables 查询重置事件 -->
+        <!-- operationGroup 表单业务按钮 -->
+        <!-- businessGroup 表单业务事件 -->
         <MyTable 
           class="MyTable"
           @tables="tables"
@@ -22,75 +31,84 @@ const columns = [
   {
     dataIndex: 'id',
     // slots: { title: 'customTitle' },
-    title: '客户编号',
+    title: '回款单号',
     scopedSlots: { customRender: 'id' },
-    fixed: 'left',
+    key: 1,
     width: 100
   },
   {
     title: '客户名称',
     dataIndex: 'name',
+    key: 2,
     width: 100
   },
   {
-    title: '关联产品',
+    title: '所有人',
     dataIndex: 'location',
+    key: 3,
     width: 100
   },
   {
-    title: '客户所有人',
+    title: '回款日期',
     dataIndex: 'tariffNumber',
+    key: 4,
     width: 100
   },
   {
-    title: '电话',
+    title: '回款金额（元）',
     dataIndex: 'telephone',
+    key: 5,
     width: 100
   },
   {
-    title: '省份',
+    title: '关联账单',
     dataIndex: 'sourceType',
+    key: 6,
     scopedSlots: { customRender: 'sourceType' },
     width: 100
   },
   {
-    title: '行业',
+    title: '创建时间',
     dataIndex: 'sourceTypeDesc',
+    key: 7,
     width: 100
   },
   {
-    title: '最新更近时间',
+    title: '创建方式',
     dataIndex: 'industryDictCode',
+    key: 8,
     width: 100
   },
   {
-    title: '客户创建人',
+    title: '匹配状态',
     dataIndex: 'industryDictDesc',
+    key: 9,
     width: 100
   },
   {
-    title: '客户创建时间',
+    title: '创建人',
     dataIndex: 'belongUser',
+    key: 10,
     width: 100
   },
   {
-    title: '操作',
-    scopedSlots: { customRender: 'operation' },
-    fixed: 'right',
-    width: 200
+    title: '备注',
+    dataIndex: 'createUser',
+    key: 11,
+    width: 100
   },
   {
     dataIndex: 'Transfer',
-    key: 'Transfer',
+    key: 13,
     slots: { title: 'Transfer' },
     width: 40,
-    fixed: 'right'
-  },
+  }
 ];
-const selected = [];
+const selected = [
+  ];
 
 export default {
-  name: 'mine',
+  name: 'Collection',
   data() {
     return {
       data: [],
@@ -100,44 +118,46 @@ export default {
       selected,
       condition: [
         {
-          key: '客户名称',
+          key: '账号',
           title: 'name',
           select: false
         },
         {
-          key: '关联产品',
+          key: '客户名称',
+          title: 'uuname',
+          select: false
+        },
+        {
+          key: '关联账单',
+          title: 'bill',
+          select: false
+        },
+        {
+          key: '创建时间',
           title: 'product',
           select: true,
           option: [
             {
-              title: '短信',
+              title: '1月',
               value: 1
             }
           ]
         },
         {
-          key: '最新跟进时间',
-          title: 'state',
+          key: '匹配状态',
+          title: 'distributionStatus',
           select: true,
           option: [
             {
-              title: '大于三天',
+              title: '成功',
               value: 1
             },
             {
-              title: '大于一周',
+              title: '失败',
               value: 2
-            },
-            {
-              title: '大于一个月',
-              value: 3
-            },
-            {
-              title: '大于三个月',
-              value: 4
             }
           ]
-        }
+        },
       ],
       Inline: {
       },
@@ -145,16 +165,12 @@ export default {
       oncedata: [],
       operationGroup: [
         {
-          name: '新建',
+          name: '新建回款',
           disabled: false
         },
         {
-          name: '批量导入',
+          name: '批量导入回款',
           disabled: false
-        },
-        {
-          name: '批量退回公海',
-          disabled: true
         }
       ]
     };
@@ -243,6 +259,14 @@ export default {
   .ant-collapse-header {
     color: rgb(49, 155, 226) !important;
   }
+  // .ant-table-content{
+  //   .ant-table-scroll{
+  //     .ant-table-placeholder{
+  //       padding: 0 !important;
+  //       border-top: none !important;
+  //     }
+  //   }
+  // }
   .ant-table-content > .ant-table-scroll > .ant-table-body {
     overflow-x: auto !important;
   }

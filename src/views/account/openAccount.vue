@@ -10,6 +10,7 @@
           :Inline="Inline"
           :ButtonTB="ButtonTB"
           :operationGroup="operationGroup"
+          :displayScroll="false"
         />
   </div>
 </template>
@@ -20,75 +21,31 @@ const columns = [
   {
     dataIndex: 'id',
     // slots: { title: 'customTitle' },
-    title: '编号',
-    scopedSlots: { customRender: 'id' },
-    fixed: 'left',
-    width: 100
+    title: '申请编号',
+    scopedSlots: { customRender: 'id' }
   },
   {
     title: '客户名称',
-    dataIndex: 'name',
-    width: 100
-  },
-  {
-    title: '详细地址',
-    dataIndex: 'location',
-    width: 100
-  },
-  {
-    title: '纳税人识别号',
-    dataIndex: 'tariffNumber',
-    width: 100
-  },
-  {
-    title: '座机号码',
-    dataIndex: 'telephone',
-    width: 100
-  },
-  {
-    title: '客户属性',
-    dataIndex: 'sourceType',
-    scopedSlots: { customRender: 'sourceType' },
-    width: 100
-  },
-  {
-    title: '客户属性描述',
-    dataIndex: 'sourceTypeDesc',
-    width: 100
-  },
-  {
-    title: '行业类型编码',
-    dataIndex: 'industryDictCode',
-    width: 100
-  },
-  {
-    title: '行业类型',
-    dataIndex: 'industryDictDesc',
-    width: 100
-  },
-  {
-    title: '所有人',
-    dataIndex: 'belongUser',
-    width: 100
+    dataIndex: 'name'
   },
   {
     title: '创建人',
-    dataIndex: 'createUser',
-    width: 100
+    dataIndex: 'location'
+  },
+  {
+    title: '创建日期',
+    dataIndex: 'tariffNumber'
+  },
+  {
+    title: '状态',
+    dataIndex: 'sourceType',
+    scopedSlots: { customRender: 'sourceType' }
   },
   {
     title: '操作',
     scopedSlots: { customRender: 'operation' },
-    fixed: 'right',
     width: 200
-  },
-  {
-    dataIndex: 'Transfer',
-    key: 'Transfer',
-    slots: { title: 'Transfer' },
-    width: 40,
-    fixed: 'right'
-  },
+  }
 ];
 const selected = [];
 
@@ -120,12 +77,40 @@ export default {
         {
           key: '状态',
           title: 'owner',
-          select: true
+          select: true,
+          option: [
+            {
+              title: '审批中',
+              value: 1
+            },
+            {
+              title: '开户中',
+              value: 2
+            },
+            {
+              title: '审批通过',
+              value: 3
+            },
+            {
+              title: '未申请',
+              value: 4
+            }
+          ]
         },
         {
           key: '创建日期',
           title: 'date',
-          select: true
+          select: true,
+          option: [
+            {
+              title: '1',
+              value: 1
+            },
+            {
+              title: '2',
+              value: 2
+            }
+          ]
         },
       ],
       Inline: {

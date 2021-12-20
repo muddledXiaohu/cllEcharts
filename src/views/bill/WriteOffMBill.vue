@@ -1,5 +1,14 @@
 <template>
   <div>
+        <!-- columns table标题栏选择项 -->
+        <!-- selectedHeader标题栏已选项 -->
+        <!-- displayScroll是否显示左右滚动条 -->
+        <!-- condition 查询项 -->
+        <!-- Inline 查询绑定数据 -->
+        <!-- ButtonTB 查询重置按钮 -->
+        <!-- tables 查询重置事件 -->
+        <!-- operationGroup 表单业务按钮 -->
+        <!-- businessGroup 表单业务事件 -->
         <MyTable 
           class="MyTable"
           @tables="tables"
@@ -22,75 +31,197 @@ const columns = [
   {
     dataIndex: 'id',
     // slots: { title: 'customTitle' },
-    title: '客户编号',
+    title: '账单编号',
     scopedSlots: { customRender: 'id' },
     fixed: 'left',
+    key: 1,
+    width: 100
+  },
+  {
+    title: '账号',
+    dataIndex: 'name',
+    key: 2,
     width: 100
   },
   {
     title: '客户名称',
-    dataIndex: 'name',
-    width: 100
-  },
-  {
-    title: '关联产品',
     dataIndex: 'location',
+    key: 3,
     width: 100
   },
   {
-    title: '客户所有人',
+    title: '创建时间',
     dataIndex: 'tariffNumber',
+    key: 4,
     width: 100
   },
   {
-    title: '电话',
+    title: '结算月份',
     dataIndex: 'telephone',
+    key: 5,
     width: 100
   },
   {
-    title: '省份',
+    title: '结算开始日期',
     dataIndex: 'sourceType',
+    key: 6,
     scopedSlots: { customRender: 'sourceType' },
     width: 100
   },
   {
-    title: '行业',
+    title: '结算结束日期',
     dataIndex: 'sourceTypeDesc',
+    key: 7,
     width: 100
   },
   {
-    title: '最新更近时间',
+    title: '金额（元）',
     dataIndex: 'industryDictCode',
+    key: 8,
     width: 100
   },
   {
-    title: '客户创建人',
+    title: '提交条数',
     dataIndex: 'industryDictDesc',
+    key: 9,
     width: 100
   },
   {
-    title: '客户创建时间',
+    title: '成功条数',
     dataIndex: 'belongUser',
+    key: 10,
+    width: 100
+  },
+  {
+    title: '计费条数',
+    dataIndex: 'createUser',
+    key: 11,
+    width: 100
+  },
+  {
+    title: '审批状态',
+    dataIndex: 'createUser',
+    key: 12,
+    width: 100
+  },
+  {
+    title: '关联回款',
+    dataIndex: 'createUser',
+    key: 13,
+    width: 100
+  },
+  {
+    title: '已回款（元）',
+    dataIndex: 'createUser',
+    key: 14,
+    width: 100
+  },
+  {
+    title: '待回款（元）',
+    dataIndex: 'createUser',
+    key: 15,
+    width: 100
+  },
+  {
+    title: '回款状态',
+    dataIndex: 'createUser',
+    key: 16,
+    width: 100
+  },
+  {
+    title: '回款更新日期',
+    dataIndex: 'createUser',
+    key: 17,
     width: 100
   },
   {
     title: '操作',
     scopedSlots: { customRender: 'operation' },
     fixed: 'right',
+    key: 18,
     width: 200
   },
   {
     dataIndex: 'Transfer',
-    key: 'Transfer',
+    key: 19,
     slots: { title: 'Transfer' },
     width: 40,
     fixed: 'right'
-  },
+  }
 ];
-const selected = [];
+const selected = [
+    {
+    title: '提交条数',
+    dataIndex: 'industryDictDesc',
+    key: 9,
+    width: 100
+  },
+  {
+    title: '成功条数',
+    dataIndex: 'belongUser',
+    key: 10,
+    width: 100
+  },
+  {
+    title: '计费条数',
+    dataIndex: 'createUser',
+    key: 11,
+    width: 100
+  },
+  {
+    title: '审批状态',
+    dataIndex: 'createUser',
+    key: 12,
+    width: 100
+  },
+  {
+    title: '关联回款',
+    dataIndex: 'createUser',
+    key: 13,
+    width: 100
+  },
+  {
+    title: '已回款（元）',
+    dataIndex: 'createUser',
+    key: 14,
+    width: 100
+  },
+  {
+    title: '待回款（元）',
+    dataIndex: 'createUser',
+    key: 15,
+    width: 100
+  },
+  {
+    title: '回款状态',
+    dataIndex: 'createUser',
+    key: 16,
+    width: 100
+  },
+  {
+    title: '回款更新日期',
+    dataIndex: 'createUser',
+    key: 17,
+    width: 100
+  },
+  {
+    title: '操作',
+    scopedSlots: { customRender: 'operation' },
+    fixed: 'right',
+    key: 18,
+    width: 200
+  },
+  {
+    dataIndex: 'Transfer',
+    key: 19,
+    slots: { title: 'Transfer' },
+    width: 40,
+    fixed: 'right'
+  }
+  ];
 
 export default {
-  name: 'mine',
+  name: 'WriteOffMBill',
   data() {
     return {
       data: [],
@@ -100,62 +231,51 @@ export default {
       selected,
       condition: [
         {
-          key: '客户名称',
+          key: '账单编号',
           title: 'name',
           select: false
         },
         {
-          key: '关联产品',
-          title: 'product',
+          key: '账号',
+          title: 'uname',
+          select: false
+        },
+        {
+          key: '客户名称',
+          title: 'customername',
+          select: false
+        },
+        {
+          key: '回款状态',
+          title: 'mstate',
+          select: false
+        },
+        {
+          key: '金额（元）',
+          title: 'amount',
+          select: false
+        },
+        {
+          key: '结算月份',
+          title: 'distributionStatus',
           select: true,
           option: [
             {
-              title: '短信',
+              title: '1月',
               value: 1
+            },
+            {
+              title: '2月',
+              value: 2
             }
           ]
         },
-        {
-          key: '最新跟进时间',
-          title: 'state',
-          select: true,
-          option: [
-            {
-              title: '大于三天',
-              value: 1
-            },
-            {
-              title: '大于一周',
-              value: 2
-            },
-            {
-              title: '大于一个月',
-              value: 3
-            },
-            {
-              title: '大于三个月',
-              value: 4
-            }
-          ]
-        }
       ],
       Inline: {
       },
       ButtonTB: {1: '查询', 2: '重置'},
       oncedata: [],
       operationGroup: [
-        {
-          name: '新建',
-          disabled: false
-        },
-        {
-          name: '批量导入',
-          disabled: false
-        },
-        {
-          name: '批量退回公海',
-          disabled: true
-        }
       ]
     };
   },
@@ -243,6 +363,14 @@ export default {
   .ant-collapse-header {
     color: rgb(49, 155, 226) !important;
   }
+  // .ant-table-content{
+  //   .ant-table-scroll{
+  //     .ant-table-placeholder{
+  //       padding: 0 !important;
+  //       border-top: none !important;
+  //     }
+  //   }
+  // }
   .ant-table-content > .ant-table-scroll > .ant-table-body {
     overflow-x: auto !important;
   }

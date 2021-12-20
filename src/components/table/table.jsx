@@ -1,4 +1,13 @@
-
+// columns table标题栏选择项 
+// selectedHeader标题栏已选项 
+// displayScroll是否显示左右滚动条 
+// condition 查询项 
+// Inline 查询绑定数据 
+// ButtonTB 查询重置按钮 
+// tables 查询重置事件 
+// operationGroup 表单业务按钮 
+// businessGroup 表单业务事件 
+// pagination分页 
 import HTransfer from "./Transfer";
 export default {
   components: {
@@ -8,8 +17,11 @@ export default {
       columns: {
           type: Array
       },
+      selectedHeader: {
+        type: Array
+      },
       data: {
-          type: Array
+        type: Array
       },
       condition: {
         type: Array
@@ -25,23 +37,21 @@ export default {
       // 操作按钮表
       operationGroup: {
         type: Array
-      }
+      },
+      displayScroll: {
+        type: Boolean
+      },
+      // 分页
+      pagination: {
+        type: Object
+      },
   },
   data() {
     return {
       selectedRowKeys: [],
       loading: false,
       formInline: {},
-      wrapperCol: { span: 0, offset: 19 },
       customStyle:' font-size: 16px;background: #f0f2f5;border-radius: 4px;margin-bottom: 4px;border: 0;overflow: hidden',
-      pagination: {
-        total: 0,
-        pageSize: 10,
-        showSizeChanger: true,
-        pageSizeOptions: ["5", "10", "20", "50"],
-        showTotal: total => `共 ${total} 条`,
-        showQuickJumper: true
-      },
       visible: false,
       scroll:{x: 1500}
     };
@@ -88,12 +98,12 @@ export default {
       ): (
         <a-form-model-item label={item.key}>
           <a-select vModel={this.formInline[item.title]} placeholder='请选择' style="min-width: 120px">
-            <a-select-option value="shanghai">
-              Zone one
-            </a-select-option>
-            <a-select-option value="beijing">
-              Zone two
-            </a-select-option>
+            {item.option.map(optionItem => {
+              return (
+                <a-select-option value={optionItem.value}>
+                  {optionItem.title}
+                </a-select-option>)
+            })}
           </a-select>
         </a-form-model-item>);
     });
@@ -152,11 +162,11 @@ export default {
           columns={ this.columns }
           data-source={ this.data }
           {...{ scopedSlots }}
-          row-selection={this.rowSelection}
+          row-selection={ this.operationGroup.length != 0 ? this.rowSelection : null}
           pagination={this.pagination}
           rowKey={"id"}
-          scroll={ this.scroll }
-          style="height: 600px;"
+          scroll={ this.displayScroll ? this.scroll : {} }
+          style="height: 500px;"
         >
         <span slot="Transfer"
           {...{ on: { click: () => { this.SelectData() } } }}>
@@ -169,7 +179,7 @@ export default {
         title="编辑显示字段"
         okText="保存设置"
         {...{ on: { ok: () => { this.handleOk() } } }}>
-          <HTransfer dataSource={this.columns} />
+          <HTransfer dataSource={this.columns} selectedHeader={this.selectedHeader} onTransfers={this.transfers} />
         </a-modal>
       </div>
     );
@@ -212,6 +222,13 @@ export default {
       let result = false
       this.$emit('businessGroup', this.selectedRowKeys, e, val => { result = val }) // 传函数给父组件
       return result
+    },
+    // 修改头部表单标题栏
+    transfers(row, callback) {
+      let result = false;
+      //业务逻辑代码...
+      callback(result);
+      console.log(row);
     },
     // 打开穿梭框选择数据
     SelectData () {

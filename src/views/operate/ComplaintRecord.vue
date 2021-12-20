@@ -1,5 +1,14 @@
 <template>
   <div>
+        <!-- columns table标题栏选择项 -->
+        <!-- selectedHeader标题栏已选项 -->
+        <!-- displayScroll是否显示左右滚动条 -->
+        <!-- condition 查询项 -->
+        <!-- Inline 查询绑定数据 -->
+        <!-- ButtonTB 查询重置按钮 -->
+        <!-- tables 查询重置事件 -->
+        <!-- operationGroup 表单业务按钮 -->
+        <!-- businessGroup 表单业务事件 -->
         <MyTable 
           class="MyTable"
           @tables="tables"
@@ -22,75 +31,120 @@ const columns = [
   {
     dataIndex: 'id',
     // slots: { title: 'customTitle' },
-    title: '客户编号',
+    title: '编号',
     scopedSlots: { customRender: 'id' },
-    fixed: 'left',
+    key: 1,
     width: 100
   },
   {
-    title: '客户名称',
+    title: '投诉反馈时间',
     dataIndex: 'name',
+    key: 2,
     width: 100
   },
   {
-    title: '关联产品',
+    title: '实际下发时间',
     dataIndex: 'location',
+    key: 3,
     width: 100
   },
   {
-    title: '客户所有人',
+    title: '举报时间',
     dataIndex: 'tariffNumber',
+    key: 4,
     width: 100
   },
   {
-    title: '电话',
+    title: '号码',
     dataIndex: 'telephone',
+    key: 5,
     width: 100
   },
   {
-    title: '省份',
+    title: '端口',
     dataIndex: 'sourceType',
+    key: 6,
     scopedSlots: { customRender: 'sourceType' },
     width: 100
   },
   {
-    title: '行业',
+    title: '投诉途径',
     dataIndex: 'sourceTypeDesc',
+    key: 7,
     width: 100
   },
   {
-    title: '最新更近时间',
+    title: '投诉内容',
     dataIndex: 'industryDictCode',
+    key: 8,
     width: 100
   },
   {
-    title: '客户创建人',
+    title: '核实内容',
     dataIndex: 'industryDictDesc',
+    key: 9,
     width: 100
   },
   {
-    title: '客户创建时间',
+    title: '账号',
     dataIndex: 'belongUser',
+    key: 10,
+    width: 100
+  },
+  {
+    title: '归属地运营商',
+    dataIndex: 'createUser',
+    key: 11,
+    width: 100
+  },
+  {
+    title: '签名投诉比',
+    dataIndex: 'a',
+    key: 12,
+    width: 100
+  },
+  {
+    title: '备注',
+    dataIndex: 'b',
+    key: 13,
+    width: 100
+  },
+  {
+    title: '签名',
+    dataIndex: 'c',
+    key: 14,
+    width: 100
+  },
+  {
+    title: '签名发送量',
+    dataIndex: 'd',
+    key: 15,
+    width: 100
+  },
+  {
+    title: '该签名本月投诉次数',
+    dataIndex: 'e',
+    key: 16,
+    width: 100
+  },
+  {
+    title: '该账号本月投诉次数',
+    dataIndex: 'f',
+    key: 17,
     width: 100
   },
   {
     title: '操作',
     scopedSlots: { customRender: 'operation' },
-    fixed: 'right',
+    key: 18,
     width: 200
   },
-  {
-    dataIndex: 'Transfer',
-    key: 'Transfer',
-    slots: { title: 'Transfer' },
-    width: 40,
-    fixed: 'right'
-  },
 ];
-const selected = [];
+const selected = [
+  ];
 
 export default {
-  name: 'mine',
+  name: 'ComplaintRecord',
   data() {
     return {
       data: [],
@@ -100,62 +154,21 @@ export default {
       selected,
       condition: [
         {
-          key: '客户名称',
+          key: '签名',
           title: 'name',
           select: false
         },
         {
-          key: '关联产品',
+          key: '时间',
           title: 'product',
-          select: true,
-          option: [
-            {
-              title: '短信',
-              value: 1
-            }
-          ]
+          select: false
         },
-        {
-          key: '最新跟进时间',
-          title: 'state',
-          select: true,
-          option: [
-            {
-              title: '大于三天',
-              value: 1
-            },
-            {
-              title: '大于一周',
-              value: 2
-            },
-            {
-              title: '大于一个月',
-              value: 3
-            },
-            {
-              title: '大于三个月',
-              value: 4
-            }
-          ]
-        }
       ],
       Inline: {
       },
       ButtonTB: {1: '查询', 2: '重置'},
       oncedata: [],
       operationGroup: [
-        {
-          name: '新建',
-          disabled: false
-        },
-        {
-          name: '批量导入',
-          disabled: false
-        },
-        {
-          name: '批量退回公海',
-          disabled: true
-        }
       ]
     };
   },
@@ -243,6 +256,14 @@ export default {
   .ant-collapse-header {
     color: rgb(49, 155, 226) !important;
   }
+  // .ant-table-content{
+  //   .ant-table-scroll{
+  //     .ant-table-placeholder{
+  //       padding: 0 !important;
+  //       border-top: none !important;
+  //     }
+  //   }
+  // }
   .ant-table-content > .ant-table-scroll > .ant-table-body {
     overflow-x: auto !important;
   }

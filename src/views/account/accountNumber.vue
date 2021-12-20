@@ -10,83 +10,115 @@
           :Inline="Inline"
           :ButtonTB="ButtonTB"
           :operationGroup="operationGroup"
+          :selectedHeader="selected"
+          :displayScroll="false"
         />
   </div>
 </template>
 <script>
 import MyTable from "@/components/table/table.jsx";
+import { list } from '@/api/customer'
 const columns = [
   {
-    dataIndex: 'number',
+    dataIndex: 'id',
     // slots: { title: 'customTitle' },
-    title: '申请编号',
-    scopedSlots: { customRender: 'number' },
+    title: '账号',
+    scopedSlots: { customRender: 'id' }
   },
   {
-    title: '客户名称',
-    dataIndex: 'name',
+    title: '客户',
+    dataIndex: 'name'
   },
   {
-    title: '创建人',
-    dataIndex: 'Creator',
+    title: '关联产品',
+    dataIndex: 'location'
   },
   {
-    title: '创建日期',
-    dataIndex: 'CreationDate',
+    title: '平台',
+    dataIndex: 'tariffNumber'
   },
   {
-    title: '状态',
-    dataIndex: 'state',
-    scopedSlots: { customRender: 'state' },
+    title: '账号属性',
+    dataIndex: 'attribute'
+  },
+  {
+    title: '账号创建人',
+    dataIndex: 'sourceType'
+  },
+  {
+    title: '账号创建日期',
+    dataIndex: 'date'
+  },
+  {
+    title: '当前单价',
+    dataIndex: 'currentPrice'
+  },
+  {
+    title: '当前单价生效日期',
+    dataIndex: 'currentPriceDate'
   },
   {
     title: '操作',
     scopedSlots: { customRender: 'operation' },
+    width: 200
+  },
+  {
+    dataIndex: 'Transfer',
+    key: 'Transfer',
+    slots: { title: 'Transfer' },
+    width: 40,
   },
 ];
-
-const data = [
-  {
-    key: '1',
-    Creator: '胡',
-    CreationDate: '2021-10-14',
-    name: 'John Brown',
-    number: 1,
-    state: ['开户中'],
-  },
-  {
-    key: '2',
-    Creator: '吴',
-    CreationDate: '2021-10-24',
-    name: 'Jim Green',
-    number: 2,
-    state: ['审批中'],
-  },
-  {
-    key: '3',
-    Creator: '董',
-    CreationDate: '2021-10-51',
-    name: 'Joe Black',
-    number: 3,
-    state: ['审批通过'],
-  },
-];
+const selected = [];
 
 export default {
   name: 'accountNumber',
   data() {
     return {
-      data,
+      data: [],
+      // 可选项
       columns,
+      // 已选项
+      selected,
       condition: [
         {
           key: '账号',
-          title: 'a'
+          title: 'name',
+          select: false
+        },
+        {
+          key: '客户名称',
+          title: 'product',
+          select: false
+        },
+        {
+          key: '平台',
+          title: 'state',
+          select: false
+        },
+        {
+          key: '最新调价日期',
+          title: 'owner',
+          select: true,
+          option: [
+            {
+              title: '1',
+              value: 1
+            },
+            {
+              title: '2',
+              value: 2
+            },
+            {
+              title: '3',
+              value: 3
+            },
+            {
+              title: '4',
+              value: 4
+            }
+          ]
         }
-        // {
-        //   key: '申请编号4',
-        //   title: 'e'
-        // }
       ],
       Inline: {
       },
@@ -110,8 +142,27 @@ export default {
   created() {
     this.getInline()
     this.onceDt()
+    this.lists()
   },
   methods: {
+    async lists () {
+      const a = {
+            "page":1,
+            "count":10,
+            "name":"",
+            "belongUid":1,
+            "distributionStatus":0,
+            "all":false,
+            "self":false
+            }
+      await list(a)
+        .then((res) => {
+          console.log(res)
+          const { data } = res
+          this.data = data.records
+        })
+        .catch(err => console.log(err))
+    },
     getInline () {
       let arr = {}
       for (const key in this.condition) {
@@ -150,12 +201,12 @@ export default {
     query(row) {
       console.log(row);
       let arr = []
-      if (row.a == "") {
+      if (row.name == "") {
         this.data = this.oncedata
         return;
       }
       for (const key in this.data) {
-        if (this.data[key].name.indexOf(row.a) != -1) {
+        if (this.data[key].name.indexOf(row.name) != -1) {
           arr.push(this.data[key])
         } 
       }
@@ -168,6 +219,17 @@ export default {
 .MyTable {
   .ant-collapse-header {
     color: rgb(49, 155, 226) !important;
+  }
+  // .ant-table-content{
+  //   .ant-table-scroll{
+  //     .ant-table-placeholder{
+  //       padding: 0 !important;
+  //       border-top: none !important;
+  //     }
+  //   }
+  // }
+  .ant-table-content > .ant-table-scroll > .ant-table-body {
+    overflow-x: auto !important;
   }
 }
 </style>

@@ -90,6 +90,96 @@ export const asyncRouterMap = [
         meta: { title: 'mine' }
       }
     ]
+  },
+  {
+    path: '/bill',
+    component: () => import(/* webpackChunkName: "bill" */ '@/components/everyOne.vue'),
+    redirect: '/bill/MonthlyBill',
+    hidden: true,
+    meta: { title: 'bill' },
+    name: 'bill',
+    children: [
+      {
+        path: 'MonthlyBill',
+        name: 'MonthlyBill',
+        component: () => import(/* webpackChunkName: "bill" */ '@/views/bill/MonthlyBill'),
+        meta: { title: 'MonthlyBill' }
+      },
+      {
+        path: 'WriteOffMBill',
+        name: 'WriteOffMBill',
+        component: () => import(/* webpackChunkName: "bill" */ '@/views/bill/WriteOffMBill'),
+        meta: { title: 'WriteOffMBill' }
+      },
+      {
+        path: 'Collection',
+        name: 'Collection',
+        component: () => import(/* webpackChunkName: "bill" */ '@/views/bill/Collection'),
+        meta: { title: 'Collection' }
+      },
+      {
+        path: 'Invoicing',
+        name: 'Invoicing',
+        component: () => import(/* webpackChunkName: "bill" */ '@/views/bill/Invoicing'),
+        meta: { title: 'Invoicing' }
+      },
+      {
+        path: 'passagewayMBill',
+        name: 'passagewayMBill',
+        component: () => import(/* webpackChunkName: "bill" */ '@/views/bill/passagewayMBill'),
+        meta: { title: 'passagewayMBill' }
+      },
+      {
+        path: 'passagewayWriteOffMB',
+        name: 'passagewayWriteOffMB',
+        component: () => import(/* webpackChunkName: "bill" */ '@/views/bill/passagewayWriteOffMB'),
+        meta: { title: 'passagewayWriteOffMB' }
+      },
+    ]
+  },
+  {
+    path: '/passageway',
+    component: () => import(/* webpackChunkName: "passageway" */ '@/components/everyOne.vue'),
+    redirect: '/passageway/merchant',
+    hidden: true,
+    meta: { title: 'passageway' },
+    name: 'passageway',
+    children: [
+      {
+        path: 'merchant',
+        name: 'merchant',
+        component: () => import(/* webpackChunkName: "passageway" */ '@/views/passageway/merchant'),
+        meta: { title: 'merchant' }
+      },
+      {
+        path: 'Conservation',
+        name: 'Conservation',
+        component: () => import(/* webpackChunkName: "passageway" */ '@/views/passageway/Conservation'),
+        meta: { title: 'Conservation' }
+      },
+      {
+        path: 'ConservationEchats',
+        name: 'ConservationEchats',
+        component: () => import(/* webpackChunkName: "passageway" */ '@/views/passageway/ConservationEchats'),
+        meta: { title: 'ConservationEchats' }
+      },
+    ]
+  },
+  {
+    path: '/operate',
+    component: () => import(/* webpackChunkName: "operate" */ '@/components/everyOne.vue'),
+    redirect: '/operate/ComplaintRecord',
+    hidden: true,
+    meta: { title: 'operate' },
+    name: 'operate',
+    children: [
+      {
+        path: 'ComplaintRecord',
+        name: 'ComplaintRecord',
+        component: () => import(/* webpackChunkName: "operate" */ '@/views/operate/ComplaintRecord'),
+        meta: { title: 'ComplaintRecord' }
+      },
+    ]
   }
 
   // {
