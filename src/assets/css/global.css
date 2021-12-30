@@ -5,5 +5,5 @@ html,body,#app{
     margin: 0;
     padding: 0; 
     min-width: 900px;
-    line-height: 0;
+    /* line-height: 0; */
 }

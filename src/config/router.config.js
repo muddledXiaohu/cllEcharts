@@ -88,6 +88,18 @@ export const asyncRouterMap = [
         name: 'mine',
         component: () => import(/* webpackChunkName: "customer" */ '@/views/customer/mine'),
         meta: { title: 'mine' }
+      },
+      {
+        path: 'NewCustomer',
+        name: 'NewCustomer',
+        component: () => import(/* webpackChunkName: "customer" */ '@/views/customer/NewCustomer'),
+        meta: { title: 'NewCustomer' },
+      },
+      {
+        path: 'details',
+        name: 'details',
+        component: () => import(/* webpackChunkName: "customer" */ '@/views/customer/details'),
+        meta: { title: 'details' },
       }
     ]
   },
@@ -180,7 +192,14 @@ export const asyncRouterMap = [
         meta: { title: 'ComplaintRecord' }
       },
     ]
-  }
+  },
+  // {
+  //   // NewCustomer
+  //   path: '/NewCustomer',
+  //   component: () => import(/* webpackChunkName: "operate" */ '@/views/customer/NewCustomer.vue'),
+  //   // redirect: '/NewCustomer',
+  //   hidden: true,
+  // }
 
   // {
   //   path: '/404',

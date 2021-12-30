@@ -8,7 +8,7 @@
           :data='data'
           :condition='condition'
           :Inline="Inline"
-          :ButtonTB="ButtonTB"
+          :buttonGroup="buttonGroup"
           :operationGroup="operationGroup"
           :selectedHeader="selected"
           :displayScroll="false"
@@ -122,7 +122,7 @@ export default {
       ],
       Inline: {
       },
-      ButtonTB: {1: '查询', 2: '重置'},
+      buttonGroup: {1: '查询', 2: '重置'},
       oncedata: [],
       operationGroup: [
         {

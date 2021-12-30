@@ -5,7 +5,7 @@
         <!-- displayScroll是否显示左右滚动条 -->
         <!-- condition 查询项 -->
         <!-- Inline 查询绑定数据 -->
-        <!-- ButtonTB 查询重置按钮 -->
+        <!-- buttonGroup 查询重置按钮 -->
         <!-- tables 查询重置事件 -->
         <!-- operationGroup 表单业务按钮 -->
         <!-- businessGroup 表单业务事件 -->
@@ -17,7 +17,7 @@
           :data='data'
           :condition='condition'
           :Inline="Inline"
-          :ButtonTB="ButtonTB"
+          :buttonGroup="buttonGroup"
           :operationGroup="operationGroup"
           :selectedHeader="selected"
           :displayScroll="true"
@@ -111,7 +111,7 @@ export default {
       ],
       Inline: {
       },
-      ButtonTB: {1: '查询', 2: '重置'},
+      buttonGroup: {1: '查询', 2: '重置'},
       oncedata: [],
       operationGroup: [
       ]

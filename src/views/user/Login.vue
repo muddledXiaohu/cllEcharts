@@ -46,7 +46,7 @@
         >
       </a-form-item>
     </a-form>
-    <a-button @click="qweqwe">123</a-button>
+    <!-- <a-button @click="qweqwe">123</a-button> -->
   </div>
 </template>
 <script>
@@ -90,7 +90,7 @@ export default {
     // 图形验证码
     async getPhonecode() {
       const { data: res } = await this.$http.get(
-        "usercenter/auth/getCaptcha?userName="
+        "http://192.168.1.41/usercenter/auth/getCaptcha?userName="
       );
       // console.log(res);
       this.userInfo = res;
@@ -125,14 +125,14 @@ export default {
       // console.log(this.form.getFieldsValue());
     },
     async qweqwe () {
-      const { Usercenter } = this
-      await Usercenter(11)
-        .then((res) => console.log(res))
-        .catch(err => console.log(err))
-        .finally(() => {
-          console.log('zale');
-        })
-      console.log(2);
+      // const { Usercenter } = this
+      // await Usercenter(11)
+      //   .then((res) => console.log(res))
+      //   .catch(err => console.log(err))
+      //   .finally(() => {
+      //     console.log('zale');
+      //   })
+      // console.log(2);
       this.$router.push({ path: '/' });
     },
     // 登录
@@ -141,6 +141,7 @@ export default {
       Login(array)
         .then((res) => {
           console.log(res);
+          this.qweqwe()
         })
         .catch(err => console.log(err))
         .finally(() => {

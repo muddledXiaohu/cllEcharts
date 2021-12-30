@@ -16,6 +16,8 @@ const request = axios.create({
   })
   // 
   // request.defaults.baseURL = '/userToken/'
+  // request.defaults.baseURL = 'http://192.168.1.134/crm'
+  // document
   request.defaults.baseURL = '/document/'
 
   // 异常拦截处理器

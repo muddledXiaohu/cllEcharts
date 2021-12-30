@@ -128,9 +128,10 @@ export default {
     z-index: 9;
     width: 100%;
     margin-top: 60px;
+    // margin-bottom: 150px;
   }
   .keepalv {
-    margin-top: 130px;
+    margin-top: 150px;
   }
 </style>
 <style lang="less">

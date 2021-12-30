@@ -1,7 +1,7 @@
 import router from './router'
 import store from './store'
 import storage from 'store'
-import NProgress from 'nprogress' // progress bar
+import NProgress from 'nprogress' // 进度条
 import { ACCESS_TOKEN, ACCESS_ROLEID } from '@/store/mutation-types'
 
 const loginRoutePath = '/login'
@@ -17,21 +17,21 @@ router.beforeEach((to, from, next) => {
         if (store.getters.roles.length === 0) {
           const userInfo = JSON.parse(decodeURIComponent(window.atob(storage.get(ACCESS_ROLEID))))
           console.log('storage:', userInfo);
-          store
-            .dispatch('Usercenter', userInfo.roleId)
-            .then(res => {
-              console.log(res);
-            })
-          store.dispatch('GenerateRoutes', userInfo.roleId).then(
-            () => {
-              store.getters.addRouters.forEach(r => {
-                router.addRoute(r)
-              })
-            }
-          )
-          .catch(() => {
-            console.log('失败');
-          })
+          // store
+          //   .dispatch('Usercenter', userInfo.roleId)
+          //   .then(res => {
+          //     console.log(res);
+          //   })
+          // store.dispatch('GenerateRoutes', userInfo.roleId).then(
+          //   () => {
+          //     store.getters.addRouters.forEach(r => {
+          //       router.addRoute(r)
+          //     })
+          //   }
+          // )
+          // .catch(() => {
+          //   console.log('失败');
+          // })
         } else {
           next()
         }

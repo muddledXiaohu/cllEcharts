@@ -4,19 +4,29 @@
           class="MyTable"
           @tables="tables"
           @businessGroup="businessGroup"
+          @ListOperation="ListOperation"
           :columns="columns"
           :data='data'
+          :pagination='pagination'
           :condition='condition'
           :Inline="Inline"
-          :ButtonTB="ButtonTB"
+          :buttonGroup="buttonGroup"
           :operationGroup="operationGroup"
-          :displayScroll="false"
+          :selectedHeader="selected"
+          :displayScroll="true"
         />
+        <NewOpenAccoint
+          :openAccoint="openAccoint"
+          @newlyBuildCancel="newlyBuildCancel"
+         />
   </div>
 </template>
 <script>
 import MyTable from "@/components/table/table.jsx";
-import { list } from '@/api/customer'
+import NewOpenAccoint from "./newOpenAccoint.vue";
+import { applicationList } from '@/api/user'
+import { ACCESS_CONTACTS } from '@/store/mutation-types'
+import { baseMixin } from '@/store/app-mixin'
 const columns = [
   {
     dataIndex: 'id',
@@ -26,19 +36,19 @@ const columns = [
   },
   {
     title: '客户名称',
-    dataIndex: 'name'
+    dataIndex: 'customerName'
   },
   {
     title: '创建人',
-    dataIndex: 'location'
+    dataIndex: 'createUsername'
   },
   {
     title: '创建日期',
-    dataIndex: 'tariffNumber'
+    dataIndex: 'createTime'
   },
   {
     title: '状态',
-    dataIndex: 'sourceType',
+    dataIndex: 'status',
     scopedSlots: { customRender: 'sourceType' }
   },
   {
@@ -47,9 +57,11 @@ const columns = [
     width: 200
   }
 ];
-const selected = [];
+const selected = [
+  ];
 
 export default {
+  mixins: [baseMixin],
   name: 'openAccount',
   data() {
     return {
@@ -115,7 +127,7 @@ export default {
       ],
       Inline: {
       },
-      ButtonTB: {1: '查询', 2: '重置'},
+      buttonGroup: ['查询', '重置'],
       oncedata: [],
       operationGroup: [
         {
@@ -126,11 +138,27 @@ export default {
           name: '批量提交',
           disabled: true
         }
-      ]
+      ],
+      // 分页
+      pagination: {
+        total: 0,
+        pageSize: 10,
+        showSizeChanger: true,
+        pageSizeOptions: ["5", "10", "20", "50"],
+        showTotal: total => `共 ${total} 条`,
+        showQuickJumper: true,
+        onShowSizeChange: (current, pageSize) => {this.switchpage(current, pageSize)}, // 改变每页数量时更新显示
+        onChange:(page,pageSize)=>{this.switchpage(page, pageSize)},//点击页码事件
+      },
+      // 渲染数据条件
+      listArr: {},
+      // 新建开户
+      openAccoint: false
     };
   },
   components: {
     MyTable,
+    NewOpenAccoint
   },
   created() {
     this.getInline()
@@ -139,29 +167,25 @@ export default {
   },
   methods: {
     async lists () {
-      const a = {
+      let belong = JSON.parse(JSON.stringify(this.roles))
+      this.listArr = {
             "page":1,
             "count":10,
             "name":"",
-            "belongUid":1,
+            "belongUid":belong.id,
             "distributionStatus":0,
             "all":false,
             "self":false
             }
-      await list(a)
+      await applicationList(this.listArr)
         .then((res) => {
           console.log(res)
           const { data } = res
           this.data = data.records
+          this.pagination.total = data.total
+          this.pagination.pageSize = data.pageSize
         })
         .catch(err => console.log(err))
-    },
-    getInline () {
-      let arr = {}
-      for (const key in this.condition) {
-        arr[this.condition[key].title] = ''
-      }
-      this.Inline = arr
     },
     onceDt() {
       this.oncedata = this.$XHCopy(this.data)
@@ -185,31 +209,65 @@ export default {
       //业务逻辑代码...
       callback(result);
       if (e == '新建开户申请') {
+        // this.$router.push({ name: 'newOpenAccoint' })
+        this.openAccoint = true
         console.log(1);
       } else {
-        console.log(row);
+        console.log(2);
       }
     },
+    // ListOperation
+    ListOperation (row, e, callback) {
+      let result = false;
+      //业务逻辑代码...
+      callback(result);
+      if (e == 'name') {
+        // console.log(row);
+        this.$store.commit(ACCESS_CONTACTS, row)
+        this.$router.push({ name: 'details' })
+      }
+
+    },
     // 查询
-    query(row) {
-      console.log(row);
-      let arr = []
-      if (row.name == "") {
-        this.data = this.oncedata
-        return;
+    async query(row) {
+      await applicationList(row).then(res => {
+          const { data } = res
+          this.data = data.records
+          this.pagination.total = data.total
+          this.pagination.pageSize = data.pageSize
+      }).catch(err => console.log(err))
+    },
+    // 重置
+    getInline () {
+      let arr = {}
+      for (const key in this.condition) {
+        arr[this.condition[key].title] = ''
       }
-      for (const key in this.data) {
-        if (this.data[key].name.indexOf(row.name) != -1) {
-          arr.push(this.data[key])
-        } 
-      }
-      this.data = arr
+      this.Inline = arr
+    },
+    // 分页事件
+    async switchpage (current, pageSize) {
+      this.listArr.page = current
+      this.listArr.count = pageSize
+      await applicationList(this.listArr).then(res => {
+          const { data } = res
+          this.data = data.records
+          this.pagination.total = data.total
+          this.pagination.pageSize = data.pageSize
+      }).catch(err => console.log(err))
+    },
+    // 取消新建
+    newlyBuildCancel (row) {
+      this.openAccoint = row
     }
   }
 };
 </script>
 <style lang="less">
 .MyTable {
+    width: 95%;
+    margin: 20px auto;
+    // background-color: #fff;
   .ant-collapse-header {
     color: rgb(49, 155, 226) !important;
   }

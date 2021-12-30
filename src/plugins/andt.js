@@ -18,7 +18,14 @@ import {
     formModel,
     select,
     modal,
-    transfer
+    transfer,
+    row,
+    col,
+    cascader,
+    message,
+    list,
+    descriptions,
+    popconfirm
 } from 'ant-design-vue';
 Vue.use(Layout)
 Vue.use(Menu)
@@ -38,5 +45,13 @@ Vue.use(formModel)
 Vue.use(select)
 Vue.use(modal)
 Vue.use(transfer)
+Vue.use(row)
+Vue.use(col)
+Vue.use(cascader)
+Vue.use(list)
+Vue.use(descriptions)
+Vue.use(popconfirm)
 
+Vue.prototype.$message = message;
 Vue.prototype.$notification = notification;
+Vue.prototype.$confirm = modal.confirm;

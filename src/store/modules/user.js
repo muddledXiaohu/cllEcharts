@@ -4,12 +4,12 @@ import { ACCESS_TOKEN, ACCESS_ROLEID } from '@/store/mutation-types'
 const user = {
   state: {
     token: '',
-    roles: [],
+    roles: {},
     visitedViews: [
       {key: "/customer/international",
       name: "international",
       title: "客户公海"}
-    ]
+    ],
   },
 
   mutations: {
@@ -58,7 +58,7 @@ const user = {
     Logout ({ commit }) {
       return new Promise((resolve) => {
           commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
+          commit('SET_ROLES', {})
           storage.remove(ACCESS_TOKEN)
           storage.remove(ACCESS_ROLEID)
           resolve()

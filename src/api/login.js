@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
 const userApi = {
-  Login: 'usercenter/auth/token',
-  Usercenter: 'usercenter/rolePermission/getByRole'
+  Login: 'http://192.168.1.41/usercenter/auth/token',
+  Usercenter: 'http://192.168.1.41/usercenter/rolePermission/getByRole'
 }
 
 /**

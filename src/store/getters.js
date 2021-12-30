@@ -3,6 +3,7 @@ const getters = {
   roles: state => state.user.roles,
   addRouters: state => state.permission.addRouters,
   visitedViews: state => state.user.visitedViews,
+  contactsOBJ: state => state.app.contactsOBJ,
 }
 
 export default getters
