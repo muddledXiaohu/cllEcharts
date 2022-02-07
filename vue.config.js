@@ -26,7 +26,8 @@ module.exports = {
                 }
             },
             '/document': {
-                target: 'http://127.0.0.1:4523/mock/466637',
+                target: 'http://192.168.1.134/crm',
+                // target: 'http://127.0.0.1:4523/mock/466637',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/document': ''

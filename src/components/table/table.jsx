@@ -10,6 +10,7 @@
 // pagination分页 
 // ListOperation表单数据点击事件（customRender==id）
 import HTransfer from "./Transfer";
+import moment from 'moment';
 export default {
   components: {
     HTransfer,
@@ -46,6 +47,14 @@ export default {
     pagination: {
       type: Object
     },
+    // 权限按钮
+    permissionButton: {
+      type: Array
+    },
+    // sourceType的判断
+    sourceTypeArr: {
+      type: Object
+    }
   },
   data() {
     return {
@@ -54,44 +63,62 @@ export default {
       formInline: {},
       customStyle: ' font-size: 16px;background: #fff;border-radius: 4px;margin-bottom: 4px;border: 0;overflow: hidden',
       visible: false,
-      scroll: { x: 1500 },
       advanced: false,
-      SelectArray: []
+      SelectArray: [],
+      createValue: [],
+      monthValue: "",
+      jurisdiction: 'color: #ccc;'
     };
   },
   render() {
+    const that = this;
     const scopedSlots = {
       id: (title, EachItems) => {
         return (
           <a
-            {...{ on: { click: () => { this.EachItem('name', EachItems) } } }}>{title}</ a>
+            {...{ on: { click: () => { this.EachItem('name', EachItems) } } }}>{title}</a>
         );
       },
       sourceType: title => {
         return (
           <span>
             <a-tag
-              color={title === '1' ? 'volcano' : title === "2" ? 'geekblue' : 'green'}
+              color={this.sourceTypeArr[title].color}
             >
-              {title}
+              {this.sourceTypeArr[title].tit}
             </a-tag>
           </span>
         )
       },
-      operation: () => {
+      operation: (title, EachItems) => {
         return (
-          <span>
-            <a>按钮1</ a>
-            <a-divider type="vertical" />
-            <a>按钮2</ a>
-            <a-divider type="vertical" />
-            <a class="ant-dropdown-link"> C <a-icon type="down" /> </ a>
-          </span>
+          that.permissionButton && that.permissionButton.map(item => {
+            const directives = [
+                { name: 'action', value: item.title}
+            ]
+            return  item.name != '编辑' && item.name != '核销' ?
+              (<span>
+                <a-popconfirm
+                 onConfirm={() => {
+                  this.operationClick(item.clck, title)
+                }}
+                 title={`是否确认${item.name}？`} ok-text="是" cancel-text="否">
+                  <a style="margin-left: 10px;" { ...{ directives } }>
+                    {item.name}
+                  </ a>
+                </a-popconfirm>
+              </span>) : (<span>
+                  <a style="margin-left: 10px;"
+                  style={item.jurisdiction && EachItems[item.jurisdiction] != 0 ? this.jurisdiction : null}
+                  onClick={() => {this.operationClick(item.clck, title)}}>
+                    {item.name}
+                  </ a>
+              </span>)
+          })
         );
       }
     }
 
-    const that = this;
     // form每一项
     let panes = null
     if (that.condition) {
@@ -102,8 +129,18 @@ export default {
               vModel={this.formInline[item.title]} />
           </a-form-model-item>
         ) : (
+          item.times ?
+          (!item.month ? <a-form-model-item label={item.key}>
+            <a-range-picker
+              value={this.createValue} onChange={this.selectTime} format="YYYY-MM-DD" placeholder={['开始时间', '结束时间']} />
+          </a-form-model-item> : <a-form-model-item label={item.key}>
+          <a-month-picker value={this.monthValue} onChange={this.selectTime} format="YYYY-MM" />
+          </a-form-model-item>) : (
           <a-form-model-item label={item.key}>
-            <a-select vModel={this.formInline[item.title]} placeholder='请选择' style="min-width: 120px">
+            <a-select
+              vModel={this.formInline[item.title]}
+              placeholder='请选择'
+              style="min-width: 120px">
               {item.option.map(optionItem => {
                 return (
                   <a-select-option value={optionItem.value}>
@@ -111,60 +148,58 @@ export default {
                   </a-select-option>)
               })}
             </a-select>
-          </a-form-model-item>);
+          </a-form-model-item>));
       });
     }
     // 查询按钮
     let HButton = null
     if (that.buttonGroup) {
       HButton = that.buttonGroup.map(a => {
-        return (
-          <a-button
+        return  a == '返回' ?(<a-button
+            style="position: absolute;right: 32px;"
+            {...{ on: { click: () => { this.search(a) } } }}>
+            {a}
+          </a-button>) : (<a-button
             type="primary"
             style="margin-left: 10px;"
             {...{ on: { click: () => { this.search(a) } } }}>
             {a}
-          </a-button>
-        )
+          </a-button>)
       })
     }
     // 表单增删改查等等等
     let HoperationGroup = null
     if (that.operationGroup) {
-      HoperationGroup = that.operationGroup.map(item => {
-        return (
-          <a-button
-            type="primary"
-            style="margin-left: 10px;"
-            disabled={item.disabled ? this.selectedRowKeys.length === 0 : false}
-            {...{ on: { click: () => { this.business(item.name) } } }}
-          >
-            {item.name}
-          </a-button>
-        )
-      })
+      HoperationGroup = 
+      <div class="HoperationGroup">
+        <h4>列表</h4>
+        <div>
+          {
+            that.operationGroup.map(item => {
+              return (
+                <a-button
+                  type="primary"
+                  style="margin-left: 10px;"
+                  disabled={item.disabled ? this.selectedRowKeys.length === 0 : false}
+                  {...{ on: { click: () => { this.business(item.name) } } }}
+                >
+                  {item.name}
+                </a-button>
+              )
+            })
+          }
+        </div>
+      </div>
     }
     const collapses =
-      that.condition && that.condition.length > 0 ? (<div>
-        <span class="table-page-search-submitButtons" style={this.advanced && { float: 'right', overflow: 'hidden', width: '60px', height: '20px' } || {}}>
-          <a onClick={this.toggleAdvanced} style="position: absolute; right: 60px;">
-            {this.advanced ? '收起' : '展开'}
-            <a-icon type={this.advanced ? 'up' : 'down'} />
-          </a>
-        </span>
-        {that.advanced ?
-          <a-form-model layout="inline" props={{ model: this.formInline }}>
-            {panes}
-            <a-form-model-item>
-              {HButton}
-            </a-form-model-item>
-          </a-form-model> : null}</div>) : null
+      that.condition && that.condition.length > 0 ?
+      <a-form-model class="formModelMenuHeader" layout="inline" props={{ model: this.formInline }}>
+      {panes}
+        {HButton}
+    </a-form-model> : null
     return (
       <div>
         {collapses}
-        <div class="FormActionItem">
-          {HoperationGroup}
-        </div>
         <div>
           <span style="margin-left: 8px">
             {this.hasSelected ? `已选择 ${this.selectedRowKeys.length} 项` : ''}
@@ -181,10 +216,10 @@ export default {
           data-source={this.data}
           {...{ scopedSlots }}
           row-selection={this.operationGroup && this.operationGroup.length != 0 ? this.rowSelection : null}
-          pagination={this.pagination}
-          rowKey={"id"}
-          // scroll={this.displayScroll ? this.scroll : {}}
-          style="height: 500px;"
+          pagination={this.pagination != undefined && this.pagination}
+          rowKey="id"
+          class="hwGTable"
+          title={() => HoperationGroup}
         >
           <span slot="Transfer"
             {...{ on: { click: () => { this.SelectData() } } }}>
@@ -196,6 +231,8 @@ export default {
           vModel={this.visible}
           title="编辑显示字段"
           okText="保存设置"
+          okText="确认"
+          cancelText="取消"
           {...{ on: { ok: () => { this.handleOk() } } }}>
           <HTransfer dataSource={this.columns} selectedHeader={this.selectedHeader} onTransfers={this.transfers} />
         </a-modal>
@@ -204,6 +241,7 @@ export default {
   },
   created() {
     this.getformInline()
+    this.gainMonthDate()
   },
   watch: {
     Inline() {
@@ -211,8 +249,13 @@ export default {
     }
   },
   methods: {
+    moment,
     getformInline() {
       this.formInline = this.Inline
+      if (this.formInline.date != 1) {
+        this.createValue = []
+        this.monthValue = ""
+      }
     },
     $_handleInputUser(value) {
       this.formInline.user = value
@@ -236,7 +279,7 @@ export default {
         });
       }
       this.SelectArray = arr
-      console.log('selectedRowKeys changed:', this.selectedRowKeys);
+      // console.log('selectedRowKeys changed:', this.selectedRowKeys);
     },
     toggleAdvanced() {
       this.advanced = !this.advanced
@@ -254,10 +297,7 @@ export default {
       return result
     },
     // 修改头部表单标题栏
-    transfers(row, callback) {
-      let result = false;
-      //业务逻辑代码...
-      callback(result);
+    transfers(row) {
       console.log(row);
     },
     // 打开穿梭框选择数据
@@ -272,9 +312,39 @@ export default {
     },
     // table每项scopedSlots==id数据点击事件
     EachItem(a, EachItems) {
-      let result = false
-      this.$emit('ListOperation', EachItems, a, val => { result = val }) // 传函数给父组件
-      return result
+      this.$emit('ListOperation', EachItems, a) // 传函数给父组件
+    },
+    // 权限按钮点击事件
+    operationClick(a, title) {
+      this.$emit(a, title)
+    },
+    // 取消
+    cancel () {
+      console.log(1);
+    },
+    selectTime (e) {
+      console.log(e);
+      this.monthValue = e
+      this.createValue = e;
+      this.formInline.date = e
+    },
+    // 获取当前时间
+    currentTime () {
+      let nowDate = new Date()
+      let year = nowDate.getFullYear()
+      let month = nowDate.getMonth() + 1
+      let day = nowDate.getDate()
+      if (month < 10) month = '0' + month
+      if (day < 10) day = '0' + day
+      return year + '-' + month + '-' +day
+    },
+    // 获取monthDate
+    gainMonthDate () {
+      let nowDate = new Date()
+      let year = nowDate.getFullYear()
+      let month = nowDate.getMonth() + 1
+      if (month < 10) month = '0' + month
+      this.monthDate = year + '-' + month
     }
   },
   computed: {

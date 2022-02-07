@@ -3,6 +3,7 @@ import request from '@/utils/request'
 const userApi = {
   // 查询开户申请列表
   applicationList: 'account/apply/list',
+  save: 'account/apply/save'
 }
 
 /**
@@ -14,6 +15,13 @@ const userApi = {
 export function applicationList (parameter) {
   return request({
     url: userApi.applicationList,
+    method: 'POST',
+    data: parameter
+  })
+}
+export function save (parameter) {
+  return request({
+    url: userApi.save,
     method: 'POST',
     data: parameter
   })

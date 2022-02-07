@@ -14,12 +14,16 @@
           :operationGroup="operationGroup"
           :selectedHeader="selected"
           :displayScroll="true"
+          :permissionButton="permissionButton"
+          @permissionEdit="permissionEdit"
+          @permissionDelete="permissionDelete"
+          @permissionReturn="permissionReturn"
         />
   </div>
 </template>
 <script>
 import MyTable from "@/components/table/table.jsx";
-import { list, giveupHighSeas } from '@/api/customer'
+import { list, giveupHighSeas, customerDelete } from '@/api/customer'
 import { ACCESS_CONTACTS } from '@/store/mutation-types'
 import { baseMixin } from '@/store/app-mixin'
 const columns = [
@@ -213,7 +217,25 @@ export default {
         onChange:(page,pageSize)=>{this.switchpage(page, pageSize)},//点击页码事件
       },
       // 渲染数据条件
-      listArr: {}
+      listArr: {},
+      // 权限按钮
+      permissionButton: [
+        {
+          name: '编辑',
+          title: 'check',
+          clck: 'permissionEdit'
+        },
+        {
+          name: '删除',
+          title: 'check',
+          clck: 'permissionDelete'
+        },
+        {
+          name: '退回公海',
+          title: 'check',
+          clck: 'permissionReturn'
+        }
+      ]
     };
   },
   components: {
@@ -226,7 +248,7 @@ export default {
   },
   methods: {
     async lists () {
-      let belong = JSON.parse(JSON.stringify(this.roles))
+      let belong = JSON.parse(JSON.stringify(this.roleid))
       this.listArr = {
             "page":1,
             "count":10,
@@ -250,10 +272,7 @@ export default {
       this.oncedata = this.$XHCopy(this.data)
     },
     // 事件
-    tables(row, e, callback) {
-      let result = false;
-      //业务逻辑代码...
-      callback(result);
+    tables(row, e) {
       // 查询
       if (e == '查询') {
         this.query(row)
@@ -263,11 +282,8 @@ export default {
       }
     },
     // 业务组件
-    businessGroup(row, e, callback) {
-      let result = false;
+    businessGroup(row, e) {
       const that =this
-      //业务逻辑代码...
-      callback(result);
       if (e == '新建') {
         this.$router.push({ name: 'NewCustomer' })
         console.log(1);
@@ -286,10 +302,7 @@ export default {
       }
     },
     // ListOperation
-    ListOperation (row, e, callback) {
-      let result = false;
-      //业务逻辑代码...
-      callback(result);
+    ListOperation (row, e) {
       if (e == 'name') {
         // console.log(row);
         this.$store.commit(ACCESS_CONTACTS, row)
@@ -331,20 +344,51 @@ export default {
         console.log(e[key]);
         await giveupHighSeas({ids: e[key]}).then(res => {
           console.log(res);
+          this.$message.success('已全部退回！');
         }).catch(err => {
           console.log(err)
           this.$message.error('失败！');
           return;
         })
       }
-        this.$message.success('已全部退回！');
+    },
+    // 编辑
+    permissionEdit (e) {
+      // console.log(e);
+      this.$router.push({ name: 'NewCustomer', params: e })
+    },
+    // 删除
+    async permissionDelete (e) {
+      console.log(e.id);
+      // customerDelete
+        await customerDelete({id: e.id}).then(res => {
+          console.log(res);
+          this.$message.success('已删除完成！')
+        }).catch(err => {
+          console.log(err)
+          this.$message.error('删除失败！');
+          return;
+        })
+    },
+    // 退回公海
+    async permissionReturn (e) {
+      let arr= {ids: []}
+      arr.ids.push(e.id)
+        await giveupHighSeas(arr).then(res => {
+          console.log(res);
+          this.$message.success('已退回公海！')
+        }).catch(err => {
+          console.log(err)
+          this.$message.error('退回公海失败！');
+          return;
+        })
     }
   }
 };
 </script>
 <style lang="less">
 .MyTable {
-    width: 95%;
+    width: 98%;
     margin: 20px auto;
     // background-color: #fff;
   .ant-collapse-header {

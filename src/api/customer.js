@@ -1,21 +1,18 @@
 import request from '@/utils/request'
 
-const userApi = {
+const customerApi = {
   list: 'customer/list',
   save: 'customer/save',
   contactsSave: 'constomer/contacts/save',
   // 查询客户列表
   contactsList: 'customer/contacts/list',
-  AccountJoin:'accountJoin/list',
-  MasterAccount: 'account/list',
-  // 查看主账号明细
-  MasterAccountDetails: 'account/detail',
-  // 查看子账号明细
-  SubAccountDetails: 'accountJoin/detail',
+  accountJoin:'accountJoin/list',
   // 分配领取客户
-  AssignCustomer: '/customer/transfer',
+  assignCustomer: 'customer/transfer',
   // 批量退回公海
-  giveupHighSeas: '/customer/giveup'
+  giveupHighSeas: 'customer/giveup',
+  // 删除客户
+  customerDelete: 'constomer/contacts/delete'
 }
 
 /**
@@ -26,7 +23,7 @@ const userApi = {
  */
 export function list (parameter) {
   return request({
-    url: userApi.list,
+    url: customerApi.list,
     method: 'POST',
     data: parameter
   })
@@ -39,14 +36,14 @@ export function list (parameter) {
  */
  export function save (parameter) {
   return request({
-    url: userApi.save,
+    url: customerApi.save,
     method: 'POST',
     data: parameter
   })
 }
 export function contactsSave (parameter) {
   return request({
-    url: userApi.contactsSave,
+    url: customerApi.contactsSave,
     method: 'POST',
     data: parameter
   })
@@ -54,46 +51,22 @@ export function contactsSave (parameter) {
 // 查询客户列表
 export function contactsList (parameter) {
   return request({
-    url: userApi.contactsList,
+    url: customerApi.contactsList,
     method: 'POST',
     data: parameter
   })
 }
 export function accountJoin (parameter) {
   return request({
-    url: userApi.AccountJoin,
+    url: customerApi.accountJoin,
     method: 'POST',
-    data: parameter
-  })
-}
-// 查询主账号列表
-export function MasterAccount (parameter) {
-  return request({
-    url: userApi.MasterAccount,
-    method: 'POST',
-    data: parameter
-  })
-}
-// 查看主账号明细
-export function MasterAccountDetails (parameter) {
-  return request({
-    url: userApi.MasterAccountDetails+`?id=${parameter}`,
-    method: 'GET',
-    data: parameter
-  })
-}
-// 查看子账号明细
-export function SubAccountDetails (parameter) {
-  return request({
-    url: userApi.SubAccountDetails+`?id=${parameter}`,
-    method: 'GET',
     data: parameter
   })
 }
 // 分配领取客户
-export function AssignCustomer (parameter) {
+export function assignCustomer (parameter) {
   return request({
-    url: userApi.AssignCustomer,
+    url: customerApi.assignCustomer,
     method: 'POST',
     data: parameter
   })
@@ -101,7 +74,15 @@ export function AssignCustomer (parameter) {
 //  批量退回公海
 export function giveupHighSeas (parameter) {
   return request({
-    url: userApi.giveupHighSeas,
+    url: customerApi.giveupHighSeas,
+    method: 'POST',
+    data: parameter
+  })
+}
+// 删除
+export function customerDelete (parameter) {
+  return request({
+    url: customerApi.customerDelete,
     method: 'POST',
     data: parameter
   })

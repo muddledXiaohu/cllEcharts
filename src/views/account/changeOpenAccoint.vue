@@ -1,7 +1,7 @@
 <template>
   <div class="newOpenAccoint">
     <div class="popUpHeader">
-      <h2>开户申请</h2>
+      <h2>开户</h2>
       <div>
         <a-button @click="handleCancel">返回</a-button>
         <a-button type="primary" @click="handleOk">保存</a-button>
@@ -9,75 +9,91 @@
       </div>
     </div>
     <div class="contents">
-      <a-form :form="handleSubmitForm" @submit="handleSubmit" labelAlign="left">
-        <a-row class="form-row" :gutter="16">
-          <!-- customerId -->
-          <a-col :lg="{ span: 11 }" :md="{ span: 12 }" :sm="20">
-            <a-form-item label="公司名称">
-              <a-select
-                show-search
-                placeholder="公司名称"
-                v-decorator="[
-                  'application.customerId',
-                  ValidateRules.customerId,
-                ]"
-                option-filter-prop="children"
+        <a-form-model
+        @submit="handleSubmit"
+        :model="handleSubmitForm"
+        >
+          <a-row class="form-row" :gutter="16">
+            <!-- customerId -->
+            <a-col :lg="{span: 11}" :md="{span: 12}" :sm="20">
+              <a-form-model-item
+                
+                label="公司名称"
               >
-                <a-select-option value="jack"> Jack </a-select-option>
-                <a-select-option value="lucy"> Lucy </a-select-option>
-                <a-select-option value="tom"> Tom </a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :lg="{ span: 11 }" :md="{ span: 12 }" :sm="20">
-            <a-form-item label="发送平台">
-              <a-select
-                placeholder="请选择"
-                v-decorator="[
-                  'application.platformId',
-                  ValidateRules.platformId,
-                ]"
+                  <a-select
+                    placeholder="公司名称"
+                    v-model="handleSubmitForm.accountApplication.customerId"
+                    disabled
+                  >
+                    <a-select-option value="jack">
+                      Jack
+                    </a-select-option>
+                    <a-select-option value="lucy">
+                      Lucy
+                    </a-select-option>
+                    <a-select-option value="tom">
+                      Tom
+                    </a-select-option>
+                  </a-select>
+              </a-form-model-item>
+            </a-col>
+            <a-col :lg="{span: 11}" :md="{span: 12}" :sm="20">
+              <a-form-model-item
+                
+                label="发送平台"
               >
-                <a-select-option value="1"> 直客 </a-select-option>
-                <a-select-option value="2"> 渠道 </a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row class="form-row" :gutter="16">
-          <!-- 备注 -->
-          <a-col :lg="{ span: 22 }" :md="{ span: 24 }" :sm="20">
-            <a-form-item label="备注">
-              <a-textarea
-                v-decorator="['application.remark']"
-                placeholder="备注"
-                :auto-size="{ minRows: 3, maxRows: 5 }"
-              />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-divider />
-        <div style="display: flex; justify-content: space-between">
-          <h2>开户申请明细({{ accountDetailed.length }}条)</h2>
-          <a-button type="link" @click="AddAContact">添加</a-button>
-        </div>
-        <div class="DefiniteDetailed">
+                <a-select
+                  placeholder="请选择"
+                    v-model="handleSubmitForm.accountApplication.platformId"
+                    disabled
+                >
+                  <a-select-option value="1">
+                    直客
+                  </a-select-option>
+                  <a-select-option value="2">
+                    渠道
+                  </a-select-option>
+                </a-select>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row class="form-row" :gutter="16">
+            <!-- 备注 -->
+            <a-col :lg="{span: 22}" :md="{span: 24}" :sm="20">
+              <a-form-model-item
+                
+                label="备注"
+              >
+                <a-textarea
+                  v-model="handleSubmitForm.accountApplication.remark"
+                  disabled
+                  placeholder="备注"
+                  :auto-size="{ minRows: 3, maxRows: 5 }"
+                />
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-divider />
+          <div style="display: flex; justify-content: flex-start;">
+            <h2>开户申请明细({{handleSubmitForm.accountApplicationDetails.length}}条)</h2>
+            <a-button style="margin-left: 40px;" type="primary" @click="establishAAccount">开户</a-button>
+          </div>
           <!-- 开户申请明细 -->
-          <div
+          <div class="DefiniteDetailed">
+            <div
             class="accountDetailed"
             :style="styleScreenWidth"
-            v-for="(item, idx) in accountDetailed"
-            :key="idx"
-          >
-            <div style="display: flex; justify-content: space-between">
-              <h3>明细({{ idx + 1 }})</h3>
-              <a-button type="link" @click="contactArrDlt(idx)">删除</a-button>
-            </div>
-            <a-form-model
-              ref="ruleForm"
-              :model="item"
-              :rules="accountDetailedRules"
-            >
+            v-for="(item, idx) in handleSubmitForm.accountApplicationDetails"
+            :key="idx">
+              <div style="display: flex; justify-content: space-between">
+                <h4>明细({{ idx + 1 }})</h4>
+                <div>
+                  <a-button type="link" @click="newlyBuild(item)">关联现有账号</a-button>
+                </div>
+              </div>
+              <a-form-model
+                ref="ruleForm"
+                :model="item">
               <a-row class="form-row" :gutter="16">
                 <!-- 协议类型 -->
                 <a-col :lg="11" :md="11" :sm="20">
@@ -85,6 +101,7 @@
                     <a-select
                       placeholder="请选择"
                       v-model="item.joinProtocolCode"
+                      disabled
                     >
                       <a-select-option value="1"> CMPP </a-select-option>
                       <a-select-option value="2"> HTTP </a-select-option>
@@ -95,7 +112,8 @@
                 <!-- 绑定ip -->
                 <a-col :lg="11" :md="11" :sm="20">
                   <a-form-model-item label="绑定ip">
-                    <a-input v-model="item.masIp" placeholder="绑定ip" />
+                    <a-input v-model="item.masIp"
+                    disabled placeholder="绑定ip" />
                   </a-form-model-item>
                 </a-col>
               </a-row>
@@ -103,13 +121,15 @@
                 <!-- 连接数 -->
                 <a-col :lg="11" :md="11" :sm="20">
                   <a-form-model-item label="连接数">
-                    <a-input v-model="item.maxConnection" placeholder="连接数" />
+                    <a-input v-model="item.maxConnection"
+                    disabled placeholder="连接数" />
                   </a-form-model-item>
                 </a-col>
                 <!-- 默认签名 -->
                 <a-col :lg="11" :md="11" :sm="20">
                   <a-form-model-item label="默认签名">
-                    <a-input v-model="item.mocode" placeholder="默认签名" />
+                    <a-input v-model="item.mocode"
+                    disabled placeholder="默认签名" />
                   </a-form-model-item>
                 </a-col>
               </a-row>
@@ -118,6 +138,7 @@
                   <a-form-model-item label="移动单价" prop="price">
                     <a-input
                       v-model="item.price"
+                      disabled
                       addon-after="分"
                       placeholder="移动单价"
                     />
@@ -127,6 +148,7 @@
                   <a-form-model-item label="联通单价" prop="priceUnicom">
                     <a-input
                       v-model="item.priceUnicom"
+                      disabled
                       addon-after="分"
                       placeholder="联通单价"
                     />
@@ -138,6 +160,7 @@
                   <a-form-model-item label="电信单价" prop="priceTelecom">
                     <a-input
                       v-model="item.priceTelecom"
+                      disabled
                       addon-after="分"
                       placeholder="电信单价"
                     />
@@ -147,6 +170,7 @@
                   <a-form-model-item label="其他单价" prop="priceOther">
                     <a-input
                       v-model="item.priceOther"
+                      disabled
                       addon-after="分"
                       placeholder="其他单价"
                     />
@@ -157,7 +181,8 @@
                 <!-- 支持开启短链 -->
                 <a-col :lg="6" :md="6" :sm="20">
                   <a-form-model-item>
-                    <a-checkbox v-model="item.supportShortChain">
+                    <a-checkbox disabled v-model="item.supportShortChain">
+                      
                       支持开启短链
                     </a-checkbox>
                   </a-form-model-item>
@@ -165,7 +190,8 @@
                 <!-- 是否支持上行 -->
                 <a-col :lg="6" :md="6" :sm="20">
                   <a-form-model-item>
-                    <a-checkbox v-model="item.supportUpstream">
+                    <a-checkbox disabled v-model="item.supportUpstream">
+                      
                       是否支持上行
                     </a-checkbox>
                   </a-form-model-item>
@@ -173,7 +199,8 @@
                 <!-- 是否国际 -->
                 <a-col :lg="6" :md="6" :sm="20">
                   <a-form-model-item>
-                    <a-checkbox v-model="item.supportInternational">
+                    <a-checkbox disabled v-model="item.supportInternational">
+                      
                       是否国际
                     </a-checkbox>
                   </a-form-model-item>
@@ -183,93 +210,58 @@
                 <!-- 预付款 -->
                 <a-col :lg="6" :md="6" :sm="20">
                   <a-form-model-item>
-                    <a-checkbox v-model="item.prePay"> 预付款 </a-checkbox>
+                    <a-checkbox disabled v-model="item.prePay">
+                       预付款 </a-checkbox>
                   </a-form-model-item>
                 </a-col>
                 <!-- 自动返还 -->
                 <a-col :lg="6" :md="6" :sm="20">
                   <a-form-model-item>
-                    <a-checkbox v-model="item.autoBack"> 自动返还 </a-checkbox>
+                    <a-checkbox disabled v-model="item.autoBack">
+                       自动返还 </a-checkbox>
                   </a-form-model-item>
                 </a-col>
                 <!-- 国际短信接口是否支持国内短信 -->
                 <a-col :lg="9" :md="9" :sm="20">
                   <a-form-model-item>
-                    <a-checkbox v-model="item.interfaceSupportIna">
+                    <a-checkbox disabled v-model="item.interfaceSupportIna">
+                      
                       国际短信接口是否支持国内短信
                     </a-checkbox>
                   </a-form-model-item>
                 </a-col>
               </a-row>
-            </a-form-model>
+              </a-form-model>
+            </div>
           </div>
-        </div>
-      </a-form>
+        </a-form-model>
+      </div>
+         <BuildSendAccount
+          :sendAccount="sendAccount"
+          :basicAccountInformation="basicAccountInformation"
+          @sendAccountCancel="sendAccountCancel"
+         />
     </div>
-  </div>
 </template>
 
 <script>
-import { save } from '@/api/user'
+// 新建发送账号
+import BuildSendAccount from "./buildSendAccount.vue";
 export default {
   data() {
     return {
-      screenWidth: document.body.clientWidth,
       confirmLoading: false,
       size: false,
-      handleSubmitForm: this.$form.createForm(this, { name: "newOpenAccoint" }),
-      ValidateRules: {
-        customerId: {
-          rules: [{ required: true, message: "请输入客户名称！" }],
-        },
-        platformId: {
-          rules: [{ required: true, message: "请选择发送平台！" }],
-        },
-      },
-      accountDetailedRules: {
-        joinProtocolCode: [
-          { required: true, message: "请选择协议类型！", trigger: "change" },
-        ],
-        price: [
-          { required: true, message: "请输入移动单价！", trigger: "change" },
-        ],
-        summaryType: [
-          { required: true, message: "请选择结算方式！", trigger: "change" },
-        ],
-        priceUnicom: [
-          { required: true, message: "请输入联通单价!", trigger: "change" },
-        ],
-        priceTelecom: [
-          { required: true, message: "请输入电信单价!", trigger: "change" },
-        ],
-        priceOther: [
-          { required: true, message: "请输入其他单价!", trigger: "change" },
-        ],
-      },
-      accountDetailed: [
-        {
-          joinProtocolCode: "",
-          masIp: "",
-          maxConnection: "",
-          mocode: "",
-          price: "",
-          priceUnicom: "",
-          priceTelecom: "",
-          priceOther: "",
-          summaryType: "",
-          autoBack: false,
-          prePay: false,
-          supportInternational: false,
-          interfaceSupportIna: false,
-          supportShortChain: false,
-          supportUpstream: false,
-          attr: null,
-          type: null,
-        },
-      ],
+      handleSubmitForm: this.$route.params,
       timer: false,
-      styleScreenWidth: ''
+      styleScreenWidth: '',
+      screenWidth: document.body.clientWidth,
+      sendAccount: false,
+      basicAccountInformation: [],
     };
+  },
+  components: {
+    BuildSendAccount
   },
   props: {
   },
@@ -285,7 +277,6 @@ export default {
                 // 打印screenWidth变化的值
                 that.timer = false
                 if (that.screenWidth < 1260) {
-                console.log(that.screenWidth)
                 that.styleScreenWidth = `flex: 0 0 93%;`
                 } else {
                 that.styleScreenWidth = `flex: 0 0 48%;`
@@ -303,29 +294,12 @@ export default {
         })()
     }
   },
-  methods: {
+  created() {
+  },
+    methods: {
     // 取消
     handleCancel() {
       this.$router.go(-1);
-    },
-    handleOk() {
-      this.$refs.ruleForm[0].validate((valid) => {
-        if (valid) {
-          let arr = {};
-          this.handleSubmitForm.validateFields((err, values) => {
-            if (!err) {
-              let array = { ...values };
-              arr = array;
-              arr.details = JSON.parse(JSON.stringify(this.accountDetailed));
-              arr.application.status = 0;
-              this.newlyBuildCancel(arr)
-            }
-          });
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
     },
     handleSubmit() {
       this.$refs.ruleForm[0].validate((valid) => {
@@ -335,9 +309,9 @@ export default {
             if (!err) {
               let array = { ...values };
               arr = array;
-              arr.details = JSON.parse(JSON.stringify(this.accountDetailed));
-              arr.application.status = 1;
-              this.newlyBuildCancel(arr)
+              // arr.details = JSON.parse(JSON.stringify(this.accountDetailed));
+              // arr.application.status = 0;
+              console.log(arr);
             }
           });
         } else {
@@ -346,65 +320,39 @@ export default {
         }
       });
     },
-    // 保存 && 保存提交
-    async newlyBuildCancel (e) {
-      console.log(e);
-      if (e) {
-        await save(e).then(res => {
-          console.log(res);
-          if (res.code == 200) {
-          this.$message.success('领取成功！');
-            this.customerReturn()
-            return;
-          }
-          this.$message.error(res.msg);
-        }).catch(err => console.log(err))
-      }
-    },
-    // 放大缩小
-    switchSize() {
-      this.size = !this.size;
-    },
-    /* // 名称
-    nameError() {
-      const { getFieldError, isFieldTouched } = this.handleSubmitForm;
-      return isFieldTouched("name") && getFieldError("name");
-    }, */
-
-    // handleSubmit(e) {
-    //   e.preventDefault();
-    // },
-    // 添加
-    AddAContact() {
-      this.accountDetailed.push({
-        joinProtocolCode: "",
-        masIp: "",
-        maxConnection: "",
-        mocode: "",
-        price: "",
-        priceUnicom: "",
-        priceTelecom: "",
-        priceOther: "",
-        summaryType: "",
-        autoBack: false,
-        prePay: false,
-        supportInternational: false,
-        interfaceSupportIna: false,
-        supportShortChain: false,
-        supportUpstream: false,
-        attr: null,
-        type: null,
+    handleOk() {
+      this.$refs.ruleForm[0].validate((valid) => {
+        if (valid) {
+          let arr = {};
+          this.handleSubmitForm.validateFields((err, values) => {
+            if (!err) {
+              let array = { ...values };
+              arr = array;
+              // arr.details = JSON.parse(JSON.stringify(this.accountDetailed));
+              // arr.application.status = 0;
+              console.log(arr);
+            }
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
       });
     },
-    // 删除
-    contactArrDlt(key) {
-      if (this.accountDetailed.length === 1) {
-        return;
-      }
-      this.accountDetailed.splice(key, 1);
+    newlyBuild (item) {
+        console.log(item);
     },
-  },
-};
+    // 点击开户
+    establishAAccount () {
+      this.sendAccount = true
+      this.basicAccountInformation = this.handleSubmitForm.accountApplicationDetails
+    },
+    async sendAccountCancel(row) {
+      this.sendAccount = row
+    },
+  }
+
+}
 </script>
 
 <style lang="less" scoped>
@@ -438,9 +386,9 @@ export default {
   height: 100%;
 }
 /deep/.ant-modal-footer {
-  position: absolute;
-  width: 100%;
-  bottom: 0;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
 }
 /deep/.ant-modal-body {
   display: flex;
@@ -450,28 +398,30 @@ export default {
   background-color: #f0f2f5;
 }
 .contents {
-  overflow-x: hidden;
-  overflow-y: visible;
-  height: 89%;
+    overflow-x: hidden;
+    overflow-y: visible;
+    height: 89%;
 }
-.accountDetailed {
-  // background-color: #f7f7f7;
-  padding: 10px;
-  border-radius: 6px;
+/deep/.ant-modal-footer {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
 }
 .DefiniteDetailed {
   display: flex;
   flex-wrap: wrap;
     // justify-content: flex-start;
   .accountDetailed {
+    padding: 10px;
+    border-radius: 6px;
     flex: 0 0 48%;
     margin: 10px 0 10px 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
   }
 }
-::-webkit-scrollbar-track {
-  /*滚动条里面轨道背景*/
-  // border-radius: 5px;
-  background: #fff;
-}
+    ::-webkit-scrollbar-track {
+      /*滚动条里面轨道背景*/
+      // border-radius: 5px;
+      background: #fff;
+    }
 </style>

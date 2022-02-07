@@ -30,14 +30,8 @@ export default {
       columns: [
         {
           title: '账号',
-          dataIndex: 'id',
+          dataIndex: 'spId',
           key: 1,
-          width: 100
-        },
-        {
-          title: '关联产品',
-          dataIndex: 'customerName',
-          key: 2,
           width: 100
         },
         {
@@ -48,7 +42,7 @@ export default {
         },
         {
           title: '账号属性',
-          dataIndex: 'AccountAttribute',
+          dataIndex: 'type',
           key: 4,
           width: 100
         },
@@ -81,13 +75,7 @@ export default {
           dataIndex: 'updateTime',
           key: 9,
           width: 100
-        },
-        {
-          title: '操作',
-          scopedSlots: { customRender: 'operation' },
-          key: 10,
-          width: 100
-        },
+        }
       ],
     };
   },

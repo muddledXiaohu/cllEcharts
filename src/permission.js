@@ -14,9 +14,9 @@ router.beforeEach((to, from, next) => {
         next({ path: defaultRoutePath })
         NProgress.done()
       } else {
-        if (store.getters.roles.length === 0) {
-          const userInfo = JSON.parse(decodeURIComponent(window.atob(storage.get(ACCESS_ROLEID))))
-          console.log('storage:', userInfo);
+        if (store.getters.roles.length == 0) {
+          const userInfo = decodeURIComponent(window.atob(storage.get(ACCESS_ROLEID))) ? JSON.parse(decodeURIComponent(window.atob(storage.get(ACCESS_ROLEID)))) : {}
+          console.log(userInfo);
           // store
           //   .dispatch('Usercenter', userInfo.roleId)
           //   .then(res => {

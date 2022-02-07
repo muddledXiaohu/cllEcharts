@@ -25,7 +25,9 @@ import {
     message,
     list,
     descriptions,
-    popconfirm
+    popconfirm,
+    datePicker,
+    popover
 } from 'ant-design-vue';
 Vue.use(Layout)
 Vue.use(Menu)
@@ -51,6 +53,8 @@ Vue.use(cascader)
 Vue.use(list)
 Vue.use(descriptions)
 Vue.use(popconfirm)
+Vue.use(datePicker)
+Vue.use(popover)
 
 Vue.prototype.$message = message;
 Vue.prototype.$notification = notification;

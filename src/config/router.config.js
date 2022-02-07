@@ -51,10 +51,29 @@ export const asyncRouterMap = [
         meta: { title: 'openAccount' }
       },
       {
-        path: 'accountNumber',
-        name: 'accountNumber',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/account/accountNumber'),
-        meta: { title: 'accountNumber' }
+        path: 'mainAccountNumber',
+        name: 'mainAccountNumber',
+        component: () => import(/* webpackChunkName: "user" */ '@/views/account/mainAccountNumber'),
+        meta: { title: 'mainAccountNumber' }
+      },
+      {
+        path: 'sonAccountNumber',
+        name: 'sonAccountNumber',
+        component: () => import(/* webpackChunkName: "user" */ '@/views/account/sonAccountNumber'),
+        meta: { title: 'sonAccountNumber' }
+      },
+      {
+        path: 'newOpenAccoint',
+        name: 'newOpenAccoint',
+        component: () => import(/* webpackChunkName: "user" */ '@/views/account/newOpenAccoint.vue'),
+        meta: { title: 'newOpenAccoint' }
+      },
+      // changeOpenAccoint
+      {
+        path: 'changeOpenAccoint',
+        name: 'changeOpenAccoint',
+        component: () => import(/* webpackChunkName: "user" */ '@/views/account/changeOpenAccoint.vue'),
+        meta: { title: 'changeOpenAccoint' }
       },
       {
         path: 'role',
@@ -101,6 +120,35 @@ export const asyncRouterMap = [
         component: () => import(/* webpackChunkName: "customer" */ '@/views/customer/details'),
         meta: { title: 'details' },
       }
+    ]
+  },
+  {
+    path: '/statistics',
+    component: () => import(/* webpackChunkName: "statistics" */ '@/components/everyOne.vue'),
+    redirect: '/statistics/dayGrossProfit',
+    hidden: true,
+    meta: { title: 'statistics' },
+    name: 'statistics',
+    children: [
+      {
+        path: 'dayGrossProfit',
+        name: 'dayGrossProfit',
+        component: () => import(/* webpackChunkName: "statistics" */ '@/views/statistics/dayGrossProfit'),
+        meta: { title: 'dayGrossProfit' }
+      },
+      // dayProfit
+      {
+        path: 'dayProfit',
+        name: 'dayProfit',
+        component: () => import(/* webpackChunkName: "statistics" */ '@/views/statistics/dayProfit'),
+        meta: { title: 'dayProfit' }
+      },
+      {
+        path: 'userDayGrossP',
+        name: 'userDayGrossP',
+        component: () => import(/* webpackChunkName: "statistics" */ '@/views/statistics/userDayGrossP'),
+        meta: { title: 'userDayGrossP' }
+      },
     ]
   },
   {

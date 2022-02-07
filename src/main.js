@@ -12,6 +12,10 @@ import bootstrap from './core/bootstrap'
 // 加密
 import md5 from 'js-md5';
 
+import '@/core/directives/index'
+// import PermissionHelper from '@/core/permission/permission'
+// Vue.use(PermissionHelper)
+
 const XHCopy = (bos) => {
   let ar = bos instanceof Array ? [] : {};
   for (let k in bos){

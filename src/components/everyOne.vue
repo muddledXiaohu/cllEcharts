@@ -3,24 +3,28 @@
     <a-layout>
       <a-layout-sider v-model="collapsed" :trigger="null" collapsible :style="{ overflow: 'auto', height: '100vh' }">
         <!-- 侧边栏 -->
+        <h1>？跟谁学</h1>
         <MyHeader :menu="false" :currentUser='arrs' />
       </a-layout-sider>
       <a-layout>
         <!-- Header -->
-        <a-layout-header :style="{ position: 'fixed', zIndex: 9, width: '100%' }">
-          <a-button
-            type="primary"
-            class="toggleCollapsed"
-            @click="toggleCollapsed"
-          >
-            <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" />
-          </a-button>
-        </a-layout-header>
-        <a-layout-content>
-          <div class="rootlk">
-            <TagsView />
+        <a-layout-header class="layoutHeader">
+          <div class="expandMenu">
+            <a-button
+              type="primary"
+              class="toggleCollapsed"
+              @click="toggleCollapsed"
+            >
+              <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" />
+            </a-button>
             <Breadcrumb class="Breadcrumb" />
           </div>
+          <TagsView />
+        </a-layout-header>
+        <a-layout-content>
+          <!-- <div class="rootlk">
+            <TagsView />
+          </div> -->
           <!-- 内容 -->
           <div class="keepalv">
             <keep-alive :max="10" :include="cachedViews">
@@ -60,9 +64,16 @@ export default {
         ]},
         {title: '开户管理', name: 'user', id: 2, key: '/user', children:[
           {title: '开户申请', name: 'openAccount', key: '/user/openAccount'},
-          {title: '账号', name: 'accountNumber', key: '/user/accountNumber'}
+          {title: '主账号', name: 'mainAccountNumber', key: '/user/mainAccountNumber'},
+          {title: '发送账号', name: 'sonAccountNumber', key: '/user/sonAccountNumber'}
         ]},
-        {title: '账单管理', name: 'bill', id: 3, key: '/bill', children:[
+        {
+          title: '统计管理', name: 'statistics', id: 3, key: 'statistics', children: [
+          {title: '日毛利', name: 'dayGrossProfit', key: '/statistics/dayGrossProfit'},
+          {title: '日利润', name: 'dayProfit', key: '/statistics/dayProfit'},
+          ]
+        },
+        {title: '账单管理', name: 'bill', id: 4, key: '/bill', children:[
           {title: '客户月账单', name: 'MonthlyBill', key: '/bill/MonthlyBill'},
           {title: '客户月核销账单', name: 'WriteOffMBill', key: '/bill/WriteOffMBill'},
           {title: '客户回款', name: 'Collection', key: '/bill/Collection'},
@@ -70,13 +81,13 @@ export default {
           {title: '通道月账单', name: 'passagewayMBill', key: '/bill/passagewayMBill'},
           {title: '通道月核销账单', name: 'passagewayWriteOffMB', key: '/bill/passagewayWriteOffMB'}
         ]},
-        {title: '通道管理', name: 'passageway', id: 4, key: '/passageway', children:[
+        {title: '通道管理', name: 'passageway', id: 5, key: '/passageway', children:[
           {title: '通道商', name: 'merchant', key: '/passageway/merchant'},
           {title: '通道保量', name: 'Conservation', key: '/passageway/Conservation'},
           {title: '通道保量达标-可视化', name: 'ConservationEchats', key: '/passageway/ConservationEchats'}
         ]},
-        {title: '客诉记录', name: 'ComplaintRecord', id: 5, key: '/operate/ComplaintRecord'},
-        {title: 'role', name: 'role', id: 6, key: '/user/role'},
+        {title: '客诉记录', name: 'ComplaintRecord', id: 6, key: '/operate/ComplaintRecord'},
+        {title: 'role', name: 'role', id: 7, key: '/user/role'},
         // {title: 'c', id: 3, key: 'user/roo'}
       ]
     };
@@ -95,9 +106,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  /deep/.ant-layout-header {
-    background-color: #fff;
-  }
   /deep/.ant-layout-sider {
     background-color: #fff;
   }
@@ -108,8 +116,10 @@ export default {
       height: 100%;
   }
   /deep/.ant-layout-header {
+    height: auto;
     display: flex;
-      align-items: center;
+    flex-direction: column;
+    background-color: #fff;
   }
   /deep/ .ant-layout {
       position: relative;
@@ -123,19 +133,39 @@ export default {
     background-color: #fff;
     padding-left: 40px;
   }
-  .rootlk {
-    position: fixed;
-    z-index: 9;
-    width: 100%;
-    margin-top: 60px;
-    // margin-bottom: 150px;
+  // .keepalv {
+  //   margin-top: 150px;
+  // }
+  .layoutHeader {
+    width: 98%;
+    margin: 0 auto;
+    margin-top: 20px;
+    border-radius: 10px;
   }
-  .keepalv {
-    margin-top: 150px;
+  .expandMenu {
+    display: flex;
+    align-items: center;
+    height: 60px;
   }
 </style>
 <style lang="less">
   .FormActionItem {
     margin-bottom: 10px;
+  }
+  .formModelMenuHeader {
+      background-color: #fff;
+      padding: 10px;
+      margin: 0 auto;
+      margin-bottom: 10px;
+      border-radius: 8px;
+  }
+  .HoperationGroup {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+  .hwGTable {
+    border-radius: 10px;
+    background-color: #fff;
   }
 </style>

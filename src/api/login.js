@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-const userApi = {
+const loginApi = {
   Login: 'http://192.168.1.41/usercenter/auth/token',
   Usercenter: 'http://192.168.1.41/usercenter/rolePermission/getByRole'
 }
@@ -19,14 +19,14 @@ const userApi = {
  */
 export function login (parameter) {
   return request({
-    url: userApi.Login,
+    url: loginApi.Login,
     method: 'post',
     data: parameter
   })
 }
 export function usercenter (parameter) {
   return request({
-    url: `${userApi.Usercenter}?roleId=${parameter}`,
+    url: `${loginApi.Usercenter}?roleId=${parameter}`,
     method: 'get'
   })
 }

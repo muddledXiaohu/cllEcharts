@@ -8,7 +8,8 @@ import {
 const app = {
   state: {
     contactsOBJ: {},
-    roles: {}
+    roles: [],
+    roleid: {}
 
   },
   mutations: {
@@ -18,7 +19,7 @@ const app = {
       storage.set(ACCESS_CONTACTS, userIf)
     },
     [ACCESS_ROLEID]: (state, type) => {
-      state.roles = type
+      state.roleid = type
       const userIf = window.btoa(window.encodeURIComponent(JSON.stringify(type)))
       storage.set(ACCESS_ROLEID, userIf)
     },

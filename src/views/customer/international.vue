@@ -14,6 +14,10 @@
           :operationGroup="operationGroup"
           :selectedHeader="selected"
           :displayScroll="true"
+          :permissionButton="permissionButton"
+          @permissionEdit="permissionEdit"
+          @permissionDelete="permissionDelete"
+          @permissionReceive="permissionReceive"
         />
         <a-modal
           v-model="visible"
@@ -41,7 +45,7 @@
             <a-select-option value="3" disabled>
               liu
             </a-select-option>
-            <a-select-option value="4">
+            <a-select-option value="43">
               dong
             </a-select-option>
           </a-select>
@@ -51,7 +55,7 @@
 </template>
 <script>
 import MyTable from "@/components/table/table.jsx";
-import { list, AssignCustomer } from '@/api/customer'
+import { list, assignCustomer, customerDelete } from '@/api/customer'
 import { ACCESS_CONTACTS } from '@/store/mutation-types'
 import { baseMixin } from '@/store/app-mixin'
 const columns = [
@@ -61,20 +65,14 @@ const columns = [
     title: '编号',
     fixed: 'left',
     key: 1,
-    width: 100
+    width: 80
   },
   {
     title: '客户名称',
     dataIndex: 'name',
     scopedSlots: { customRender: 'id'},
     key: 2,
-    width: 100
-  },
-  {
-    title: '详细地址',
-    dataIndex: 'location',
-    key: 3,
-    width: 100
+    width: 150
   },
   {
     title: '纳税人识别号',
@@ -90,21 +88,9 @@ const columns = [
   },
   {
     title: '客户属性',
-    dataIndex: 'sourceType',
-    key: 6,
-    scopedSlots: { customRender: 'sourceType' },
-    width: 100
-  },
-  {
-    title: '客户属性描述',
     dataIndex: 'sourceTypeDesc',
-    key: 7,
-    width: 100
-  },
-  {
-    title: '行业类型编码',
-    dataIndex: 'industryDictCode',
-    key: 8,
+    key: 6,
+    // scopedSlots: { customRender: 'sourceType' },
     width: 100
   },
   {
@@ -337,7 +323,25 @@ export default {
       // 分配还是领取?
       othersThemselves: 1,
       // 分配人id
-      assignorId:null
+      assignorId:null,
+      // 权限按钮
+      permissionButton: [
+        {
+          name: '编辑',
+          title: 'check',
+          clck: 'permissionEdit'
+        },
+        {
+          name: '删除',
+          title: 'check',
+          clck: 'permissionDelete'
+        },
+        {
+          name: '领取',
+          title: 'check',
+          clck: 'permissionReceive'
+        }
+      ]
     };
   },
   components: {
@@ -351,10 +355,10 @@ export default {
   methods: {
     async lists () {
       this.listArr = {
-            "page":1,
-            "count":10,
+            "current":1,
+            "size":10,
             "name":"",
-            "belongUid":1,
+            // "belongUid": '',
             "distributionStatus":0,
             "all":false,
             "self":false
@@ -373,10 +377,7 @@ export default {
       this.oncedata = this.$XHCopy(this.data)
     },
     // 事件
-    tables(row, e, callback) {
-      let result = false;
-      //业务逻辑代码...
-      callback(result);
+    tables(row, e) {
       // 查询
       if (e == '查询') {
         this.query(row)
@@ -386,19 +387,15 @@ export default {
       }
     },
     // 业务组件
-    businessGroup(row, e, callback) {
-      let result = false;
-      //业务逻辑代码...
-      callback(result);
+    businessGroup(row, e) {
       if (e == '新建') {
         this.$router.push({ name: 'NewCustomer' })
-        console.log(1);
       } else if(e == '批量分配') {
         this.othersThemselves = 1
         this.CustomerNumber = row
         this.visible = true;
       } else if (e == '批量领取') {
-        let belong = JSON.parse(JSON.stringify(this.roles))
+        let belong = JSON.parse(JSON.stringify(this.roleid))
         this.othersThemselves = 2
         this.CustomerNumber = row
         this.visible = true;
@@ -406,10 +403,7 @@ export default {
       }
     },
     // ListOperation
-    ListOperation (row, e, callback) {
-      let result = false;
-      //业务逻辑代码...
-      callback(result);
+    ListOperation (row, e) {
       if (e == 'name') {
         // console.log(row);
         this.$store.commit(ACCESS_CONTACTS, row)
@@ -435,8 +429,8 @@ export default {
       this.Inline = arr
     },
     async switchpage (current, pageSize) {
-      this.listArr.page = current
-      this.listArr.count = pageSize
+      this.listArr.current = current
+      this.listArr.size = pageSize
       await list(this.listArr).then(res => {
           const { data } = res
           this.data = data.records
@@ -447,27 +441,63 @@ export default {
     
     async handleOk() {
       this.visible = false;
+      let arr= {ids: [], uid: this.assignorId}
       for (const key in this.CustomerNumber) {
-        console.log(1);
-        await AssignCustomer({id: this.CustomerNumber[key].id, uid: this.assignorId}).then(res => {
+        arr.ids.push(this.CustomerNumber[key].id)
+      }
+        await assignCustomer(arr).then(res => {
           console.log(res);
+          this.othersThemselves == 1 ? this.$message.success('已分配完成！') : this.$message.success('已领取完成！')
         }).catch(err => {
           console.log(err)
           this.$message.error('分配失败！');
+          return;
         })
-      }
-      this.othersThemselves == 1 ? this.$message.success('已分配完成！') : this.$message.success('已领取完成！')
+      this.lists()
     },
     
     handleChange(value) {
-      this.assignorId = value
+      this.assignorId = Number(value)
     },
+    // 编辑
+    permissionEdit (e) {
+      // console.log(e);
+      this.$router.push({ name: 'NewCustomer', params: e })
+    },
+    // 删除
+    async permissionDelete (e) {
+      console.log(e.id);
+      // customerDelete
+        await customerDelete({id: e.id}).then(res => {
+          console.log(res);
+          this.$message.success('已删除完成！')
+        }).catch(err => {
+          console.log(err)
+          this.$message.error('删除失败！');
+          return;
+        })
+    },
+    // 领取
+    async permissionReceive (e) {
+      console.log(e);
+      let belong = JSON.parse(JSON.stringify(this.roleid))
+      let arr= {ids: [], uid: belong.id}
+      arr.ids.push(e.id)
+        await assignCustomer(arr).then(res => {
+          console.log(res);
+          this.$message.success('已领取完成！')
+        }).catch(err => {
+          console.log(err)
+          this.$message.error('领取失败！');
+          return;
+        })
+    }
   }
 };
 </script>
 <style lang="less">
 .MyTable {
-    width: 95%;
+    width: 98%;
     margin: 20px auto;
     // background-color: #fff;
   .ant-collapse-header {

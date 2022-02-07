@@ -1,17 +1,26 @@
 <template>
   <div class="NewCustomer">
     <div class="OperationReturn">
+      <a-button
+        @click="handleSubmit"
+        type="primary"
+        html-type="submit"
+        class="saveSubmit"
+        :disabled="hasErrors(handleSubmitForm.getFieldsError())"
+      >
+        保存
+      </a-button>
       <a-button class="antReturn" @click="customerReturn">返回</a-button>
     </div>
-    <a-divider class="divider" orientation="left">
+    <h2 class="divider" orientation="left">
       基本信息
-    </a-divider>
+    </h2>
     <a-row type="flex">
-      <a-col :span="24">
-        <a-form :form="handleSubmitForm" @submit="handleSubmit">
+      <a-col :span="19">
+        <a-form :form="handleSubmitForm" @submit="handleSubmit"  :label-col="{ span: 3 }" :wrapper-col="{ span: 10 }">
           <a-row class="form-row" :gutter="16">
             <!-- name -->
-            <a-col :lg="6" :md="12" :sm="24">
+            <a-col :lg="19" :md="19" :sm="19">
               <a-form-item
                 :validate-status="nameError() ? 'error' : ''"
                 :help="nameError() || ''"
@@ -24,7 +33,7 @@
               </a-form-item>
             </a-col>
             <!-- sourceType -->
-            <a-col :xl="{span: 7, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
+            <a-col :lg="19" :md="19" :sm="19">
               <a-form-item
                 :validate-status="sourceTypeError() ? 'error' : ''"
                 :help="sourceTypeError() || ''"
@@ -35,16 +44,16 @@
                   v-decorator="['sourceType']"
                 >
                   <a-select-option value="1">
-                    1
+                    直客
                   </a-select-option>
                   <a-select-option value="2">
-                    2
+                    渠道
                   </a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <!-- tariffNumber -->
-            <a-col :xl="{span: 9, offset: 1}" :lg="{span: 10}" :md="{span: 24}" :sm="24">
+            <a-col :lg="19" :md="19" :sm="19">
               <a-form-item
                 :validate-status="tariffNumberError() ? 'error' : ''"
                 :help="tariffNumberError() || ''"
@@ -56,10 +65,8 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
-          <a-row class="form-row" :gutter="16">
             <!-- industryDictCode -->
-            <a-col :lg="6" :md="12" :sm="24">
+            <a-col :lg="19" :md="19" :sm="19">
               <a-form-item
                 :validate-status="industryDictCodeError() ? 'error' : ''"
                 :help="industryDictCodeError() || ''"
@@ -70,16 +77,25 @@
                   v-decorator="['industryDictCode']"
                 >
                   <a-select-option value="1">
-                    1
+                    金融
                   </a-select-option>
                   <a-select-option value="2">
-                    2
+                    电信
+                  </a-select-option>
+                  <a-select-option value="3">
+                    教育
+                  </a-select-option>
+                  <a-select-option value="4">
+                    高科技
+                  </a-select-option>
+                  <a-select-option value="5">
+                    政府
                   </a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <!-- 地区 -->
-            <a-col :xl="{span: 7, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
+            <a-col :lg="19" :md="19" :sm="19">
               <a-form-item
                 :validate-status="regionError() ? 'error' : ''"
                 :help="regionError() || ''"
@@ -92,7 +108,7 @@
               </a-form-item>
             </a-col>
             <!-- location -->
-            <a-col :xl="{span: 9, offset: 1}" :lg="{span: 10}" :md="{span: 24}" :sm="24">
+            <a-col :lg="19" :md="19" :sm="19">
               <a-form-item
                 :validate-status="locationError() ? 'error' : ''"
                 :help="locationError() || ''"
@@ -104,10 +120,8 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
-          <a-row class="form-row" :gutter="16">
             <!-- telephone -->
-            <a-col :lg="6" :md="12" :sm="24">
+            <a-col :lg="19" :md="19" :sm="19">
               <a-form-item
                 :validate-status="telephoneError() ? 'error' : ''"
                 :help="telephoneError() || ''"
@@ -120,7 +134,7 @@
               </a-form-item>
             </a-col>
             <!-- tags -->
-            <a-col :lg="6" :md="12" :sm="24">
+            <a-col :lg="19" :md="19" :sm="19">
               <a-form-item
                 :validate-status="tagsError() ? 'error' : ''"
                 :help="tagsError() || ''"
@@ -132,37 +146,32 @@
                 />
               </a-form-item>
             </a-col>
-        </a-row>
+          </a-row>
         </a-form>
-          <a-divider class="divider" orientation="left">
+          <h2 class="divider" orientation="left">
             联系人信息
-          </a-divider>
+          </h2>
       </a-col>
-      <a-col :span="24">
-        <ContactsForm
-          :contacts="contacts"
-          @CaseDeletion="CaseDeletion"
-         />
-      </a-col>
-      <a-col :span="5">
-      </a-col>
-      <a-col :span="19" style="padding-bottom: 30px;">
-        <a-button
-          type="dashed"
-          style="width: 50%; display: block;"
-          @click="AddAContact"
-        >
-          +  添加联系人
-        </a-button>
-        <a-button
-          @click="handleSubmit"
-          type="primary"
-          html-type="submit"
-          class="saveSubmit"
-          :disabled="hasErrors(handleSubmitForm.getFieldsError())"
-        >
-          保存
-        </a-button>
+      <a-col :span="19">
+        <a-row class="form-row" :gutter="16">
+          <a-col :span="19">
+            <ContactsForm
+              :contacts="contacts"
+              @CaseDeletion="CaseDeletion"
+            />
+          </a-col>
+          <a-col :span="5">
+          </a-col>
+          <a-col :span="15" style="padding-bottom: 30px;">
+            <a-button
+              type="dashed"
+              style="width: 50%; display: block;margin-left: 14%;"
+              @click="AddAContact"
+            >
+              +  添加联系人
+            </a-button>
+          </a-col>
+        </a-row>
       </a-col>
     </a-row>
   </div>
@@ -171,11 +180,13 @@
 import areaSelect from "@/components/NewCustomer/areaselect.vue";
 import ContactsForm from "@/components/NewCustomer/contactsForm.jsx";
 import { save, contactsSave } from '@/api/customer'
+import { baseMixin } from '@/store/app-mixin'
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
 export default {
   name: 'NewCustomer',
+  mixins: [baseMixin],
   components: {
     areaSelect,
     ContactsForm
@@ -192,12 +203,24 @@ export default {
       },
       selectAreaNumber: [],
       // 联系人
-      contacts: []
+      contacts: [],
+      NewCustomerForm: this.$route.params,
     }
   },
   created() {
+    this.paramsForm()
   },
+  
+  // watch:{
+  //   NewCustomerForm(){
+  //     this.paramsForm()
+  //   }
+  // },
   methods: {
+    paramsForm () {
+      console.log(this.NewCustomerForm);
+      console.log(this.handleSubmitForm);
+    },
       //选择地区之后的回调
       selectArea(selectedArea) {
         this.selectAreaNumber = selectedArea
@@ -291,6 +314,7 @@ export default {
       },
       // 添加联系人
       AddAContact () {
+        let belong = JSON.parse(JSON.stringify(this.roleid))
         this.contacts.push({
           customerId: 1,
           name:'',
@@ -301,14 +325,11 @@ export default {
           qqNumber:'',
           wechatNumber:'',
           remark:'',
-          createUid:202
+          createUid:belong.id
         })
       },
       // 删除联系人
-      CaseDeletion (row, callback) {
-        let result = false;
-        //业务逻辑代码...
-        callback(result);
+      CaseDeletion (row) {
         this.contacts.splice(row,1)
       }
   }
@@ -317,6 +338,12 @@ export default {
 <style lang="less" scoped>
 .NewCustomer {
     padding-top: 20px;
+    width: 98%;
+    margin: 0 auto;
+    margin-top: 15px;
+    background-color: #fff;
+    border-radius: 10px;
+    position: relative;
 }
 .OperationReturn {
     text-align: right;
@@ -328,9 +355,10 @@ export default {
   padding: 10px;
 }
 .saveSubmit {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
+  margin-right: 6px;
+}
+.divider {
+  padding-left: 30px;
 }
 </style>
 <style lang="less">

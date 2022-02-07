@@ -12,112 +12,56 @@
           :Inline="Inline"
           :buttonGroup="buttonGroup"
           :selectedHeader="selected"
-          :permissionButton="permissionButton"
           :displayScroll="true"
-          :sourceTypeArr="sourceTypeArr"
-          @writeOff="writeOff"
         />
   </div>
 </template>
 <script>
 import MyTable from "@/components/table/table.jsx";
 // 接口
-import { queryMonthly } from '@/api/bill'
+import { dDailyProfit } from '@/api/statistics'
 import { baseMixin } from '@/store/app-mixin'
 
 const columns = [
   {
     // slots: { title: 'customTitle' },
-    title: '账单编号',
-    dataIndex: 'id',
-    scopedSlots: { customRender: 'id' }
+    title: '用户',
+    dataIndex: 'account',
+    // scopedSlots: { customRender: 'id' }
   },
   {
-    title: '账号',
-    dataIndex: 'account'
+    title: '通道号',
+    dataIndex: 'channel'
   },
   {
-    title: '客户名称',
-    dataIndex: 'customerName'
+    title: '平台',
+    dataIndex: 'platform'
   },
   {
-    title: '创建时间',
-    dataIndex: 'createTime'
+    title: '日期',
+    dataIndex: 'sendDate'
   },
   {
-    title: '结算月份',
-    dataIndex: 'updateTime',
+    title: '供应商名称',
+    dataIndex: 'channelBusinessName',
     // scopedSlots: { customRender: 'sourceType' }
   },
   {
-    title: '结算开始日期',
-    dataIndex: 'beginDate'
+    title: '客户经理',
+    dataIndex: 'belongUserName'
   },
   {
-    title: '结算结束日期',
-    dataIndex: 'endDate'
+    title: '全部发送量',
+    dataIndex: 'success'
   },
   {
-    title: '总金额（未核销）',
-    dataIndex: 'totalPrice'
-  },
-  {
-    title: '核销总金额',
-    dataIndex: 'verifiedTotalPrice'
-  },
-  // {
-  //   title: '提交条数',
-  //   dataIndex: 'profit'
-  // },
-  // {
-  //   title: '成功条数',
-  //   dataIndex: 'profit'
-  // },
-  // {
-  //   title: '计费条数',
-  //   dataIndex: 'profit'
-  // },
-  {
-    title: '单价（分）',
-    children: [
-      {
-        title: '移动核销单价',
-        dataIndex: 'ydVerifiedPrice'
-      },
-      {
-        title: '联通核销单价',
-        dataIndex: 'ltVerifiedPrice'
-      },
-      {
-        title: '电信核销单价',
-        dataIndex: 'dxVerifiedPrice'
-      },
-      {
-        title: '三网其他核销单价',
-        dataIndex: 'otherVerifiedPrice'
-      },
-    ]
-  },
-  {
-    title: '核销备注',
-    dataIndex: 'verifiedRemark'
-  },
-  {
-    title: '是否已核销',
-    dataIndex: 'verifiedStatus',
-    scopedSlots: { customRender: 'sourceType' }
-  },
-  {
-    title: '操作',
-    scopedSlots: { customRender: 'operation' },
-    fixed: 'right',
-    key: 12,
-    width: 200
-  },
+    title: '利润（元）',
+    dataIndex: 'profit'
+  }
 ];
 export default {
   mixins: [baseMixin],
-  name: 'MonthlyBill',
+  name: 'dayProfit',
   data() {
     return {
       data: [],
@@ -127,45 +71,49 @@ export default {
       selected: [],
       condition: [
         {
-          key: '账单编号',
-          title: 'id',
-          select: false
-        },
-        {
-          key: '账号',
+          key: '用户名',
           title: 'account',
           select: false
         },
         {
-          key: '是否已核销',
-          title: 'verifiedStatus',
-          select: true,
-          option: [
-            {
-              title: '未核销',
-              value: 0
-            },
-            {
-              title: '已核销',
-              value: 1
-            },
-            {
-              title: '正在核销',
-              value: 9
-            }
-          ]
-        },
-        {
-          key: '客户名称',
-          title: 'customerId',
+          key: '通道号',
+          title: 'channelBusinessId',
           select: false
         },
         {
-          key: '结算月份',
-          title: 'sendDate',
+          key: '平台',
+          title: 'platformId',
           select: true,
-          times: true,
-          month: true
+          option: [
+            {
+              title: '金笛广告mas',
+              value: 32
+            },
+            {
+              title: '43',
+              value: 1
+            },
+            {
+              title: 'v4',
+              value: 31
+            },
+          ]
+        },
+        {
+          key: '客户经理',
+          title: 'belongUid',
+          select: false
+        },
+        // {
+        //   key: '供应商',
+        //   title: 'channel',
+        //   select: false
+        // },
+        {
+          key: '创建日期',
+          title: 'date',
+          select: true,
+          times: true
         },
       ],
       Inline: {
@@ -185,21 +133,6 @@ export default {
         onShowSizeChange: (current, pageSize) => {this.switchpage(current, pageSize)}, // 改变每页数量时更新显示
         onChange:(page,pageSize)=>{this.switchpage(page, pageSize)},//点击页码事件
       },
-      // sourceType核销状态（0-未核销 1-已核销，9-正在核销
-      sourceTypeArr: {
-        "0": {color: 'blue', tit: '未核销'},
-        "1": {color: 'blue', tit: '已核销'},
-        "9": {color: 'blue', tit: '正在核销'},
-      },
-      // 权限按钮
-      permissionButton: [
-        {
-          name: '核销',
-          title: 'check',
-          clck: 'writeOff',
-          jurisdiction: 'verifiedStatus'
-        },
-      ]
     };
   },
   components: {
@@ -213,11 +146,18 @@ export default {
   methods: {
     async lists () {
       this.listArr = {
+        account: '',
+        channel: '',
         "size":10,
         "current":1,
+        platformId: '',
+        belongUid: '',
+        sendDateStartTime: '',
+        sendDateEndTime: '',
+        channelBusinessName: '',
       }
       this.everytimes()
-      await queryMonthly(this.listArr)
+      await dDailyProfit(this.listArr)
         .then((res) => {
           const { data } = res
           this.data = data.records
@@ -227,7 +167,16 @@ export default {
         .catch(err => console.log(err))
     },
     everytimes () {
-      this.listArr.sendDate = ''
+      let nowDate = new Date()
+      let year = nowDate.getFullYear()
+      let month = nowDate.getMonth() + 1
+      let day = nowDate.getDate()
+      let days = day -1
+      if (month < 10) month = '0' + month
+      if (day < 10) day = '0' + day
+      if (days < 10) days = '0' + days
+      this.listArr.sendDateStartTime = year + '-' + month + '-' + days
+      this.listArr.sendDateEndTime = year + '-' + month + '-' + day
     },
     onceDt() {
       this.oncedata = this.$XHCopy(this.data)
@@ -236,7 +185,11 @@ export default {
     tables(row, e) {
       if (e == '查询') {
         if (row.date) {
-          this.listArr.sendDate = row.date._d.getFullYear() + '-' + this.pgetMonth((row.date._d.getMonth() + 1))
+          // 查询
+          // let rows = this.$XHCopy(row)
+          // console.log(rows);
+          this.listArr.sendDateStartTime = row.date[0].format('YYYY-MM-DD')
+          this.listArr.sendDateEndTime = row.date[1].format('YYYY-MM-DD')
           this.Inline.date = 1
         } else {
           this.everytimes()
@@ -245,14 +198,12 @@ export default {
         this.listArr.channelBusinessName = row.channelBusinessName
         this.listArr.channel = row.channel
         this.listArr.belongUid = row.belongUid
+        console.log(this.listArr);
         this.query()
       } else {
         // 重置
         this.getInline()
       }
-    },
-    pgetMonth(s) {
-      return s < 10 ? '0' + s : s
     },
     // 业务组件
     businessGroup(row, e) {
@@ -271,7 +222,7 @@ export default {
     },
     // 查询
     async query() {
-      await queryMonthly(this.listArr).then(res => {
+      await dDailyProfit(this.listArr).then(res => {
           const { data } = res
           this.data = data.records
           this.pagination.total = data.total
@@ -281,7 +232,7 @@ export default {
     async switchpage (current, pageSize) {
       this.listArr.current = current
       this.listArr.size = pageSize
-      await queryMonthly(this.listArr).then(res => {
+      await dDailyProfit(this.listArr).then(res => {
           const { data } = res
           this.data = data.records
           this.pagination.total = data.total
@@ -296,13 +247,6 @@ export default {
       }
       this.Inline = arr
     },
-    // 核销
-    writeOff (e) {
-      if (e.verifiedStatus == 0) {
-        console.log(e);
-      }
-      // this.$router.push({ name: 'NewCustomer', params: e })
-    }
   }
 };
 </script>

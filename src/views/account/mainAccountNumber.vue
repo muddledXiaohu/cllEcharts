@@ -14,37 +14,41 @@
           :operationGroup="operationGroup"
           :selectedHeader="selected"
           :displayScroll="true"
-          :permissionButton="permissionButton"
-          @tabOpenAccount="tabOpenAccount"
         />
+        <ChangeOpenAccoint
+          :openAccoint="openAccoint"
+          @newlyBuildCancel="newlyBuildCancel"
+         />
   </div>
 </template>
 <script>
 import MyTable from "@/components/table/table.jsx";
-// 接口
-import { applicationList } from '@/api/user'
-import { accountOpeningDetails } from '@/api/accout'
+import ChangeOpenAccoint from "./changeOpenAccoint.vue";
+import { masterAccount, subAccountDetails} from '@/api/accout'
 // import { ACCESS_CONTACTS } from '@/store/mutation-types'
 import { baseMixin } from '@/store/app-mixin'
-
 const columns = [
   {
-    dataIndex: 'id',
+    dataIndex: 'platformName',
     // slots: { title: 'customTitle' },
-    title: '申请编号',
-    // scopedSlots: { customRender: 'id' }
+    title: '发送平台',
+    scopedSlots: { customRender: 'id' }
   },
   {
-    title: '客户名称',
+    title: '账号名',
+    dataIndex: 'username'
+  },
+  {
+    title: '昵称',
+    dataIndex: 'trueName'
+  },
+  {
+    title: '客户名',
     dataIndex: 'customerName'
   },
   {
-    title: '创建人',
-    dataIndex: 'createUsername'
-  },
-  {
-    title: '创建日期',
-    dataIndex: 'createTime'
+    title: '等级',
+    dataIndex: 'userGrade'
   },
   {
     title: '状态',
@@ -52,52 +56,65 @@ const columns = [
     scopedSlots: { customRender: 'sourceType' }
   },
   {
+    title: '所属团队',
+    dataIndex: 'belongsToTeam'
+  },
+  {
+    title: '所有人',
+    dataIndex: 'belongUsername'
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'createTime'
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'updateTime'
+  },
+  {
     title: '操作',
     scopedSlots: { customRender: 'operation' },
     width: 200
   }
 ];
+const selected = [];
+
 export default {
   mixins: [baseMixin],
-  name: 'openAccount',
+  name: 'mainAccountNumber',
   data() {
     return {
       data: [],
       // 可选项
       columns,
       // 已选项
-      selected: [],
+      selected,
       condition: [
         {
-          key: '申请编号',
-          title: 'name',
+          key: '账号',
+          title: 'username',
           select: false
         },
         {
           key: '客户名称',
-          title: 'product',
+          title: 'customerName',
           select: false
         },
         {
-          key: '创建人',
-          title: 'state',
-          select: false
-        },
-        {
-          key: '状态',
-          title: 'owner',
+          key: '平台',
+          title: 'platformId',
           select: true,
           option: [
             {
-              title: '审批中',
+              title: '1',
               value: 1
             },
             {
-              title: '开户中',
+              title: '2',
               value: 2
             },
             {
-              title: '审批通过',
+              title: '3',
               value: 3
             },
             {
@@ -107,8 +124,8 @@ export default {
           ]
         },
         {
-          key: '创建日期',
-          title: 'date',
+          key: '调价时间',
+          title: 'updateTime',
           select: true,
           option: [
             {
@@ -128,11 +145,11 @@ export default {
       oncedata: [],
       operationGroup: [
         {
-          name: '新建开户申请',
-          disabled: false
+          name: '批量调价',
+          disabled: true
         },
         {
-          name: '批量提交',
+          name: '批量导出',
           disabled: true
         }
       ],
@@ -149,18 +166,13 @@ export default {
       },
       // 渲染数据条件
       listArr: {},
-      // 权限按钮
-      permissionButton: [
-        {
-          name: '开通账号',
-          title: 'check',
-          clck: 'tabOpenAccount'
-        }
-      ]
+      // 查看用户
+      openAccoint: false
     };
   },
   components: {
-    MyTable
+    MyTable,
+    ChangeOpenAccoint
   },
   created() {
     this.getInline()
@@ -169,17 +181,20 @@ export default {
   },
   methods: {
     async lists () {
-      let belong = JSON.stringify(this.roleid) ? JSON.parse(JSON.stringify(this.roleid)) : {}
       this.listArr = {
+      /*  customerId:0,
+        platformId:0,
+        username: '',
+        belongUid:0,
+        accountJoinId:0,
+        belongToTeam: '',
+        status:0,
+        userGrade:0,
+        all: true, */
         "size":10,
         "current":1,
-        "name":"",
-        "belongUid":belong.id,
-        "distributionStatus":0,
-        "all":false,
-        "self":false
       }
-      await applicationList(this.listArr)
+      await masterAccount(this.listArr)
         .then((res) => {
           console.log(res)
           const { data } = res
@@ -202,24 +217,21 @@ export default {
         this.getInline()
       }
     },
-    // 业务组件
-    businessGroup(row, e) {
-      if (e == '新建开户申请') {
-        this.$router.push({ name: 'newOpenAccoint'})
-        console.log(1);
-      } else {
-        console.log(2);
-      }
-    },
     // ListOperation
     async ListOperation (row, e) {
       if (e == 'name') {
         console.log(row);
+        await subAccountDetails(row.id)
+          .then((res) => {
+            console.log(res)
+            this.openAccoint = true
+          })
+          .catch(err => console.log(err))
       }
     },
     // 查询
     async query(row) {
-      await applicationList(row).then(res => {
+      await masterAccount(row).then(res => {
           const { data } = res
           this.data = data.records
           this.pagination.total = data.total
@@ -238,30 +250,25 @@ export default {
     async switchpage (current, pageSize) {
       this.listArr.current = current
       this.listArr.size = pageSize
-      await applicationList(this.listArr).then(res => {
+      await masterAccount(this.listArr).then(res => {
           const { data } = res
           this.data = data.records
           this.pagination.total = data.total
           this.pagination.pageSize = data.pageSize
       }).catch(err => console.log(err))
     },
-    // 权限事件
-    async tabOpenAccount (row) {
-      await accountOpeningDetails(row.id).then(res => {
-        // const { data } = res
-        // console.log(data);
-        // this.ChangehandleSubmitForm= data
-        this.$router.push({ name: 'changeOpenAccoint',params: res })
-      }).catch(err => console.log(err))
+    // 业务组件
+    businessGroup(row, e) {
+      //业务逻辑代码...
+      console.log(row, e);
+    },
+    // 关闭
+    async newlyBuildCancel (row) {
+      this.openAccoint = row
     }
   }
 };
 </script>
-<style lang="less" scoped>
-// /deep/.ant-col {
-//   padding-top: 30px;
-// }
-</style>
 <style lang="less">
 .MyTable {
     width: 98%;

@@ -6,17 +6,21 @@ import store from '@/store'
 import { VueAxios } from './axios'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import Cookies from 'js-cookie'
-Cookies.set('Device', 'WEB'); 
+Cookies.set('device', 'WEB');
 
 // axios实例
 const request = axios.create({
     baseURL: process.env.VUE_APP_API_BASE_URL,
     withCredentials: true,
+    headers: {
+      // 'Content-Type': 'application/json;charset=UTF-8',
+      'device': 'WEB'
+    },
     timeout: 6000
   })
   // 
   // request.defaults.baseURL = '/userToken/'
-  // request.defaults.baseURL = 'http://192.168.1.134/crm'
+  // request.defaults.baseURL = 'http://192.168.1.134/crm/'
   // document
   request.defaults.baseURL = '/document/'
 
@@ -37,11 +41,11 @@ const errorHandler = (error) => {
           description: 'Authorization verification failed'
         })
         if (token) {
-        //   store.dispatch('Logout').then(() => {
-        //     setTimeout(() => {
-        //       window.location.reload()
-        //     }, 1500)
-        //   })
+          store.dispatch('Logout').then(() => {
+            setTimeout(() => {
+              window.location.reload()
+            }, 1500)
+          })
         console.log(123);
         }
       }
@@ -73,6 +77,7 @@ request.interceptors.request.use(config => {
           setTimeout(() => {
             window.location.reload()
           }, 500)
+        console.log(111);
       }
     } else if (response.data.code == -1) {
       notification.error({

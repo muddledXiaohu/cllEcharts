@@ -1,35 +1,42 @@
 // 客户详情
 <template>
   <div>
-    <div class="OperationReturn">
-      <a-button class="antReturn" @click="customerReturn">返回</a-button>
-    </div>
-    <a-card :bordered="false" style="width: 97%; margin: 10px auto;">
-      <h3>{{contacts.name}}</h3>
-      <p><span style="padding-right: 50px;">客户所有人:  {{contacts.belongUser}} </span><span>上次跟进时间:  {{contacts.updateTime}}</span></p>
-      <div class="individualEvent">
-        <a-button>编辑客户</a-button>
-          <a-popconfirm
-            title="是否要删除此客户？"
-            ok-text="是"
-            cancel-text="否"
-            @confirm="deleteConfirm(contacts.id)"
-          >
-            <a-button>删除客户</a-button>
-          </a-popconfirm>
-        <a-button>分配客户</a-button>
-          <a-popconfirm
-            title="是否要领取此客户？"
-            ok-text="是"
-            cancel-text="否"
-            @confirm="receiveConfirm(contacts.id)"
-          >
-            <a-button>领取客户</a-button>
-          </a-popconfirm>
+    <a-card :bordered="false" style="width: 97%; margin: 10px auto; border-radius: 6px;">
+      <h2 class="cardH">{{contacts.name}}</h2>
+      <div class="userAttribute">
+        <span style="padding-right: 50px;">
+          客户所有人:  <p>{{contacts.belongUser}}</p> 
+        </span>
+        <span>
+          上次跟进时间:  <p>{{contacts.updateTime}}</p>
+        </span>
       </div>
+      <div class="individualEvent">
+        <a-button type="primary" ghost>编辑客户</a-button>
+        <a-popconfirm
+          title="是否要删除此客户？"
+          ok-text="是"
+          cancel-text="否"
+          @confirm="deleteConfirm(contacts.id)"
+        >
+          <a-button type="danger" ghost>删除客户</a-button>
+        </a-popconfirm>
+          <a-button style="color: #41b883; border-color: #41b883;" ghost>分配客户</a-button>
+        <a-popconfirm
+          title="是否要领取此客户？"
+          ok-text="是"
+          cancel-text="否"
+          @confirm="receiveConfirm(contacts.id)"
+        >
+          <a-button style="color: #f5bd00; border-color: #f5bd00;" ghost>领取客户</a-button>
+        </a-popconfirm>
+      </div>
+      <a-button class="antReturn" @click="customerReturn">返回</a-button>
     </a-card>
     <a-card
-      style="width:100%"
+      style="width: 97%;
+    margin: 0 auto;
+    border-radius: 6px;"
       :tab-list="tabList"
       :active-tab-key="noTitleKey"
       @tabChange="key => onTabChange(key)"
@@ -48,7 +55,7 @@
 <script>
 import { baseMixin } from '@/store/app-mixin'
 import detailsDescript from "@/views/customer/detailsDescript.jsx";
-import { contactsList, SubAccountDetails, MasterAccount, AssignCustomer } from '@/api/customer'// MasterAccountDetails, accountJoin 
+import { contactsList, accountJoin, masterAccount, assignCustomer } from '@/api/customer'// masterAccountDetails, accountJoin 
 export default {
   mixins: [baseMixin],
   // name: 'details',
@@ -71,10 +78,8 @@ export default {
         },
       ],
       Correspondent: [],
-      // 主账号数据
-      MasterAccountDetailsObj: {},
       // 子账号数据
-      SubAccountDetailsObj: {},
+      accountJoinObj: {},
       // TableData
       TableData: [],
       listArr: {},
@@ -101,8 +106,7 @@ export default {
   // },
   created() {
       this.contactsFEvent()
-      // this.MasterAccountDetailsEvent()
-      this.SubAccountDetailsEvent()
+      this.accountJoinEvent()
   },
   methods: {
     // 查询客户列表
@@ -117,46 +121,18 @@ export default {
         console.log(err)
       })
     },
-    // 查看主账号明细
-    // async MasterAccountDetailsEvent () {
-    //   await MasterAccountDetails(this.contacts.id)
-    //   .then((res) => {
-    //     console.log(res);
-    //     this.MasterAccountDetailsObj = res
-    //   }).catch(err => {
-    //     console.log(err)
-    //   })
-    // },
-    // 查看子账号明细
-    async SubAccountDetailsEvent () {
-      await SubAccountDetails(this.contacts.id)
-      .then((res) => {
-        this.SubAccountDetailsObj = res
-        this.detailsMasterAccount()
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    // 查询主账号列表
-    async detailsMasterAccount () {
-      this.listArr = {
-        spid: this.SubAccountDetailsObj.id,
-        customerId: this.contacts.id,
-        accountId: this.SubAccountDetailsObj.accountId,
-        platformId: 1,
-        belongUid: this.contacts.belongUid,
-        createTimeStartTime: this.SubAccountDetailsObj.startHour + this.SubAccountDetailsObj.endHour,
-        createTimeEndTime: this.SubAccountDetailsObj.startHour + this.SubAccountDetailsObj.endHour,
-        joinProtocol: this.SubAccountDetailsObj.joinProtocol,
-        all: true,
-        current: 1,
-        size: 10
+    // 查询账号列表（发送账号）
+    async accountJoinEvent () {
+      let arr = {
+        "all": true,
+        "current":1,
+        "size":10
       }
-      await MasterAccount(this.listArr)
+      await accountJoin(arr)
       .then((res) => {
-        const { data } = res
-        console.log(data);
-        this.TableData = data.records
+        console.log(res);
+          const { data } = res
+          this.TableData = data.records
           this.pagination.total = data.total
           this.pagination.pageSize = data.pageSize
       }).catch(err => {
@@ -167,7 +143,7 @@ export default {
     async switchpage (current, pageSize) {
       this.listArr.current = current
       this.listArr.size = pageSize
-      await MasterAccount(this.listArr)
+      await masterAccount(this.listArr)
       .then((res) => {
         const { data } = res
         console.log(data);
@@ -190,7 +166,7 @@ export default {
         ids: e,
         uid: this.contacts.belongUid
       }
-      await AssignCustomer(arr)
+      await assignCustomer(arr)
       .then((res) => {
         console.log(res);
         if (res.code == 200) {
@@ -213,18 +189,32 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.OperationReturn {
-    text-align: right;
-    padding: 10px 0;
-    .antReturn {
-        margin-right: 20px;
-    }
-}
 .individualEvent {
   display: flex;
   justify-content: flex-start;
   .ant-btn {
     margin-right: 5%;
   }
+}
+.cardH {
+  font-weight: 700;
+}
+/deep/.ant-card-body {
+  padding: 16px;
+}
+.antReturn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.userAttribute {
+  margin-bottom: 13px;
+  p{
+    color: #000;
+    display: inherit;
+  }
+}
+/deep/.ant-collapse-borderless {
+  background-color: #fff;
 }
 </style>
