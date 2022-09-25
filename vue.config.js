@@ -1,4 +1,6 @@
 module.exports = {
+  runtimeCompiler: true,
+    publicPath: './',
     css: {
 
         loaderOptions: {
@@ -25,12 +27,12 @@ module.exports = {
                     '^/userToken': ''
                 }
             },
-            '/document': {
-                target: 'http://192.168.1.134/crm',
-                // target: 'http://127.0.0.1:4523/mock/466637',
+            '/apis': {
+                target: 'http://localhost:5000/',
+                // target: 'http://192.168.1.70:8080',
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/document': ''
+                    '^/apis': ''
                 }
             }
         }

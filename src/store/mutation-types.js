@@ -1,3 +1,3 @@
-export const ACCESS_TOKEN = 'Access-Token'
-export const ACCESS_ROLEID = 'Access-RoleId'
+export const ACCESS_TOKEN = 'token'
+export const ACCESS_ROLEID = 'ACCESS_ROLEID'
 export const ACCESS_CONTACTS = 'Access-Contacts'

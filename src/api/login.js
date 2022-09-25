@@ -1,8 +1,9 @@
 import request from '@/utils/request'
 
 const loginApi = {
-  Login: 'http://192.168.1.41/usercenter/auth/token',
-  Usercenter: 'http://192.168.1.41/usercenter/rolePermission/getByRole'
+  Login: 'user/login',
+  // Login: 'https://oa.wxxsxx.com/usercenter/auth/token',
+  Usercenter: 'u/getByRole'
 }
 
 /**
@@ -26,7 +27,7 @@ export function login (parameter) {
 }
 export function usercenter (parameter) {
   return request({
-    url: `${loginApi.Usercenter}?roleId=${parameter}`,
+    url: `${loginApi.Usercenter}?roleId=${parameter}&type=CRM`,
     method: 'get'
   })
 }

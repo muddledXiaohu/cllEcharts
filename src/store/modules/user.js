@@ -7,9 +7,6 @@ const user = {
     roles: [],
     roleid: {},
     visitedViews: [
-      {key: "/customer/international",
-      name: "international",
-      title: "客户公海"}
     ],
   },
 
@@ -24,7 +21,6 @@ const user = {
       state.roleid = roleid
     },
     SET_visitedViews: (state, visitedViews) => {
-      console.log(visitedViews);
       state.visitedViews = visitedViews
     },
   },
@@ -35,12 +31,12 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           const result = response.data
-          // console.log(result);
-          storage.set(ACCESS_TOKEN, result.accessToken, 4 * 60 * 60 * 1000)
+          console.log(result);
+          storage.set(ACCESS_TOKEN, result.token, 4 * 60 * 60 * 1000)
           const userInfo = window.btoa(window.encodeURIComponent(JSON.stringify(result.userInfo)))
           storage.set(ACCESS_ROLEID, userInfo)
-          commit('SET_TOKEN', result.accessToken)
-          resolve(response.data)
+          commit('SET_TOKEN', result.token)
+          resolve(response)
         }).catch(error => {
           reject(error)
         })
@@ -50,7 +46,7 @@ const user = {
     Usercenter({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         usercenter(userInfo).then(response => {
-          commit('SET_ROLEID', response.data)
+          commit('SET_ROLES', response.data)
           resolve(response)
         }).catch(error => {
           reject(error)

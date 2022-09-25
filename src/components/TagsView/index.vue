@@ -13,6 +13,7 @@
       >
         {{tag.title}}
         <a-icon type="close" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
+        
       </router-link>
     </div>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
@@ -70,7 +71,11 @@ export default {
       //     this.$store.dispatch('tagsView/addVisitedView', tag)
       //   }
       // }
+      this.resetSetItem('sideOpenKey', this.$route.path.split("/")[1]);
     },
+    // routers() {
+    //   console.log(1);
+    // },
     closeSelectedTag(view) {
       // menuClose
       const { menuClose } = this
@@ -89,7 +94,7 @@ export default {
         this.left = left
       }
 
-      this.top = e.clientY - 50
+      this.top = e.clientY
       this.visible = true
       this.selectedTag = tag
     },
@@ -105,11 +110,11 @@ export default {
   height: 34px;
   width: 98%;
   display: flex;
-  margin: 0 auto;
+  // margin: 0 auto;
   align-items: center;
   background: #fff;
   margin-top: 4px;
-  box-shadow:  0 0 0 0 rgba(0, 0, 0, .12),  0 0 3px 0 rgba(0, 0, 0, .04);
+  // box-shadow:  0 0 0 0 rgba(0, 0, 0, .12),  0 0 3px 0 rgba(0, 0, 0, .04);
   .tags-view-wrapper {
     .tags-view-item {
       display: inline-block;
@@ -117,13 +122,11 @@ export default {
       cursor: pointer;
       height: 26px;
       line-height: 23px;
-      border: 1px solid #d8dce5;
       color: #495060;
-      background: #fff;
-      padding: 0 8px;
-      font-size: 12px;
+      font-size: 16px;
       margin-left: 5px;
       margin-top: 4px;
+    padding: 0 8px;
       &:first-of-type {
         margin-left: 15px;
       }
@@ -131,18 +134,17 @@ export default {
         margin-right: 15px;
       }
       &.active {
-        background-color: #42b983;
-        color: #fff;
-        border-color: #42b983;
+      color: #1890ff;
         &::before {
           content: '';
           background: #fff;
           display: inline-block;
-          width: 8px;
+          width: 63%;
+          position: absolute;
           height: 8px;
-          border-radius: 50%;
-          position: relative;
-          margin-right: 2px;
+          border-bottom: 3px solid #1890ff;
+          bottom: -4px;
+          left: 10%;
         }
       }
     }
@@ -162,6 +164,7 @@ export default {
     li {
       margin: 0;
       padding: 15px 16px;
+      line-height: 10px;
       cursor: pointer;
       &:hover {
         background: #eee;
@@ -176,7 +179,7 @@ export default {
 .tags-view-wrapper {
   .tags-view-item {
     .el-icon-close {
-      font-size: 8px;
+      font-size: 12px;
       color: #999;
       &:before {
         transform: scale(.6);

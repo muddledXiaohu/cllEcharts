@@ -3,7 +3,9 @@
     <a-layout>
       <a-layout-sider v-model="collapsed" :trigger="null" collapsible :style="{ overflow: 'auto', height: '100vh' }">
         <!-- 侧边栏 -->
-        <h1>？跟谁学</h1>
+        <h1 class="logo">
+          <img src="@/assets/CRM.svg" alt="">
+        </h1>
         <MyHeader :menu="false" :currentUser='arrs' />
       </a-layout-sider>
       <a-layout>
@@ -18,6 +20,16 @@
               <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" />
             </a-button>
             <Breadcrumb class="Breadcrumb" />
+            <!-- <a-dropdown class="hdPortrait" placement="bottomRight">
+              <a class="ant-dropdown-link" @click="e => e.preventDefault()">
+                {{names}}<a-icon type="down" />
+              </a>
+              <a-menu slot="overlay">
+                <a-menu-item>
+                  <a href="javascript:;" @click="logOuts">退出登录</a>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown> -->
           </div>
           <TagsView />
         </a-layout-header>
@@ -41,6 +53,10 @@
 import MyHeader from "@/components/menu/menu.jsx";
 import Breadcrumb from "@/components/table/breadcrumb.jsx";
 import TagsView from "@/components/TagsView";
+// import {Usercenter} from '@/api/login'
+import { mapActions } from 'vuex'
+// import { ACCESS_ROLEID } from '@/store/mutation-types'
+// import storage from 'store'
 export default {
   computed: {
     cachedViews() {
@@ -57,39 +73,8 @@ export default {
   data() {
     return {
       collapsed: false,
-      arrs: [
-        {title: '客户管理', name: 'customer', id: 1, key: '/customer', children:[
-          {title:'客户公海', name: 'international', key: '/customer/international'},
-          {title:'我的客户', name: 'mine', key: '/customer/mine'} 
-        ]},
-        {title: '开户管理', name: 'user', id: 2, key: '/user', children:[
-          {title: '开户申请', name: 'openAccount', key: '/user/openAccount'},
-          {title: '主账号', name: 'mainAccountNumber', key: '/user/mainAccountNumber'},
-          {title: '发送账号', name: 'sonAccountNumber', key: '/user/sonAccountNumber'}
-        ]},
-        {
-          title: '统计管理', name: 'statistics', id: 3, key: 'statistics', children: [
-          {title: '日毛利', name: 'dayGrossProfit', key: '/statistics/dayGrossProfit'},
-          {title: '日利润', name: 'dayProfit', key: '/statistics/dayProfit'},
-          ]
-        },
-        {title: '账单管理', name: 'bill', id: 4, key: '/bill', children:[
-          {title: '客户月账单', name: 'MonthlyBill', key: '/bill/MonthlyBill'},
-          {title: '客户月核销账单', name: 'WriteOffMBill', key: '/bill/WriteOffMBill'},
-          {title: '客户回款', name: 'Collection', key: '/bill/Collection'},
-          {title: '开票管理', name: 'Invoicing', key: '/bill/Invoicing'},
-          {title: '通道月账单', name: 'passagewayMBill', key: '/bill/passagewayMBill'},
-          {title: '通道月核销账单', name: 'passagewayWriteOffMB', key: '/bill/passagewayWriteOffMB'}
-        ]},
-        {title: '通道管理', name: 'passageway', id: 5, key: '/passageway', children:[
-          {title: '通道商', name: 'merchant', key: '/passageway/merchant'},
-          {title: '通道保量', name: 'Conservation', key: '/passageway/Conservation'},
-          {title: '通道保量达标-可视化', name: 'ConservationEchats', key: '/passageway/ConservationEchats'}
-        ]},
-        {title: '客诉记录', name: 'ComplaintRecord', id: 6, key: '/operate/ComplaintRecord'},
-        {title: 'role', name: 'role', id: 7, key: '/user/role'},
-        // {title: 'c', id: 3, key: 'user/roo'}
-      ]
+      arrs: [],
+      names: ''
     };
   },
   components: {
@@ -97,9 +82,34 @@ export default {
     Breadcrumb,
     TagsView
   },
+  created() {
+    this.usercenters()
+  },
   methods: {
+    ...mapActions(['Logout']),
     toggleCollapsed() {
       this.collapsed = !this.collapsed;
+    },
+    async usercenters() {
+      let arr = this.$XHCopy(this.$store.getters.routeListArr).map((item) => {
+        if (item.children && item.children.length != 0) {
+          // arr.splice(idx,1)
+          return item
+        }
+      })
+      arr.forEach(element => {
+        if (element) {
+          this.arrs.push(element)
+        }
+      });
+      // routeListArr
+      // this.names = JSON.parse(decodeURIComponent(window.atob(storage.get(ACCESS_ROLEID)))).name
+    },
+    // 退出登录
+    logOuts(){
+      const { Logout } = this
+      Logout()
+      this.$router.go(0);
     }
   },
 };
@@ -107,7 +117,7 @@ export default {
 
 <style lang="less" scoped>
   /deep/.ant-layout-sider {
-    background-color: #fff;
+    background-color: #fff !important;
   }
   .main {
     height: 100%;
@@ -126,6 +136,7 @@ export default {
   }
   .toggleCollapsed{
     margin-right: 10px;
+    margin-left: 15px;
   }
   .Breadcrumb {
     height: 40px;
@@ -147,6 +158,24 @@ export default {
     align-items: center;
     height: 60px;
   }
+  .logo {
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    padding-top: 6px;
+    img {
+      width: 45%;
+    }
+  }
+  .hdPortrait {
+    position: absolute;
+    right: 70px;
+    height: 40px;
+    line-height: 40px;
+  }
+  /deep/.ant-menu-inline {
+    border-right: 1px solid #fff;
+  }
 </style>
 <style lang="less">
   .FormActionItem {
@@ -156,7 +185,6 @@ export default {
       background-color: #fff;
       padding: 10px;
       margin: 0 auto;
-      margin-bottom: 10px;
       border-radius: 8px;
   }
   .HoperationGroup {

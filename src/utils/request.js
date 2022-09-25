@@ -11,18 +11,20 @@ Cookies.set('device', 'WEB');
 // axios实例
 const request = axios.create({
     baseURL: process.env.VUE_APP_API_BASE_URL,
-    withCredentials: true,
+    // withCredentials: true,
     headers: {
       // 'Content-Type': 'application/json;charset=UTF-8',
       'device': 'WEB'
     },
-    timeout: 6000
+    timeout: 60000
   })
   // 
-  // request.defaults.baseURL = '/userToken/'
+  // request.defaults.baseURL = 'http://47.93.241.39:5000/'
   // request.defaults.baseURL = 'http://192.168.1.134/crm/'
+  // request.defaults.baseURL = 'http://192.168.1.41/crm'
+  // request.defaults.baseURL = 'https://oa.wxxsxx.com/crm/'
   // document
-  request.defaults.baseURL = '/document/'
+  request.defaults.baseURL = '/apis/'
 
   // 异常拦截处理器
 const errorHandler = (error) => {
@@ -35,6 +37,12 @@ const errorHandler = (error) => {
           description: data.message
         })
       }
+      // if (error.response.status === 500) {
+      //   notification.error({
+      //     message: 'Forbidden',
+      //     description: data.message
+      //   })
+      // }
       if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
         notification.error({
           message: 'Unauthorized',
@@ -79,12 +87,13 @@ request.interceptors.request.use(config => {
           }, 500)
         console.log(111);
       }
-    } else if (response.data.code == -1) {
-      notification.error({
-        message: 'Forbidden',
-        description: response.data.msg
-      })
     }
+    //  else if (response.data.code == -1) {
+    //   notification.error({
+    //     message: 'Forbidden',
+    //     description: response.data.msg
+    //   })
+    // }
     //   storage.set(ACCESS_TOKEN, response.header.accessToken, 4 * 60 * 60 * 1000)
     return response.data
   }, errorHandler)

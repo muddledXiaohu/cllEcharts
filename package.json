@@ -12,15 +12,20 @@
     "axios": "^0.24.0",
     "babel-plugin-import": "^1.13.3",
     "core-js": "^3.6.5",
+    "echarts": "^5.3.3",
+    "file-saver": "^2.0.5",
     "js-cookie": "^3.0.1",
     "js-md5": "^0.7.3",
     "less": "^4.1.2",
     "less-loader": "^6.0.0",
     "nprogress": "^0.2.0",
     "path-to-regexp": "^6.2.0",
+    "reqwest": "^2.0.5",
     "store": "^2.0.12",
     "vue": "^2.6.11",
+    "vue-i18n": "^8.27.1",
     "vue-router": "^3.5.3",
+    "vuedraggable": "^2.24.3",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
@@ -30,7 +35,8 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "xlsx": "^0.18.2"
   },
   "eslintConfig": {
     "root": true,

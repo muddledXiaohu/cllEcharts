@@ -22,12 +22,12 @@ export default {
     ::-webkit-scrollbar-thumb {
       /*滚动条里面的滑块*/
       border-radius: 5px;
-      background: #eeeeee;
+      background: #9c9c9c;
     }
    
     ::-webkit-scrollbar-track {
       /*滚动条里面轨道背景*/
       // border-radius: 5px;
-      background: #cdcdcd;
+      background: #f0f2f5;
     }
 </style>

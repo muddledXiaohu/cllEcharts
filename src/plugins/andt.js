@@ -27,7 +27,16 @@ import {
     descriptions,
     popconfirm,
     datePicker,
-    popover
+    popover,
+    upload,
+    steps,
+    spin,
+    dropdown,
+    radio,
+    space,
+    drawer,
+    tabs,
+    inputNumber,
 } from 'ant-design-vue';
 Vue.use(Layout)
 Vue.use(Menu)
@@ -55,6 +64,15 @@ Vue.use(descriptions)
 Vue.use(popconfirm)
 Vue.use(datePicker)
 Vue.use(popover)
+Vue.use(upload)
+Vue.use(steps)
+Vue.use(spin)
+Vue.use(dropdown)
+Vue.use(radio)
+Vue.use(space)
+Vue.use(drawer)
+Vue.use(tabs)
+Vue.use(inputNumber)
 
 Vue.prototype.$message = message;
 Vue.prototype.$notification = notification;
