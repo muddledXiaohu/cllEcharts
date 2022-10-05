@@ -29,10 +29,11 @@ export function createCllNewretown (parameter) {
   })
 }
   // 查询最新最后数据
-export function cllNewretown () {
+export function cllNewretown (parameter) {
     return request({
       url: passageway.cllNewretown,
-      method: 'GET',
+      method: 'POST',
+      data: parameter
     })
 }
 // 查询前天的数据

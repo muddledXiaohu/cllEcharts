@@ -34,15 +34,15 @@
         <a-form :form="handleSubmitForm" @submit="handleSubmit"
         ref="ruleForm"
         labelAlign="left" layout="horizontal" v-bind="formItemLayout">
-        <a-tabs :activeKey="tabActiveKey" tab-position="left" @change="switchTabs">
+        <a-tabs :activeKey="tabActiveKey" tab-position="left" @change="switchTabs" v-if="voyageNb.length != 0">
           <a-tab-pane v-for="(it) in voyageNb" :key="it.id" :tab="it.imo">
             <div class="explain">
               <a-descriptions :column="3" class="adescriptions">
                 <a-descriptions-item label="船名">{{it.shopName}}</a-descriptions-item>
-                <a-descriptions-item label="总里程">{{it.username}}</a-descriptions-item>
+                <a-descriptions-item label="总里程">{{it.mileageTotal}}</a-descriptions-item>
                 <a-descriptions-item label="出发港">{{it.setPort}}</a-descriptions-item>
                 <a-descriptions-item label="航次号">{{it.imo}}</a-descriptions-item>
-                <a-descriptions-item label="剩余里程">{{it.setPort}}</a-descriptions-item>
+                <a-descriptions-item label="剩余里程">{{it.mileageRemaining}}</a-descriptions-item>
                 <a-descriptions-item label="出港时间">{{it.beginTime}}</a-descriptions-item>
               </a-descriptions>
               <div class="arrow"><a-icon class="icon" type="arrow-right" /></div>
@@ -59,6 +59,7 @@
             />
           </a-tab-pane>
         </a-tabs>
+        <a-empty v-else />
           <a-divider />
           <div style="display: flex; justify-content: space-between">
             <p>*以下请填写明细，如有特殊需求，请在上方备注中说明。</p>
@@ -394,7 +395,7 @@
      <ShipCreate 
       :shipdisplay="shipdisplay"
       @closeFrame="closeShipCreate"
-      @shipCancel="ShipCreate"
+      @shipCancel="shipCreates"
      />
   </div>
 </template>
@@ -406,12 +407,12 @@ import ShipCreate from './components/shipCreate.vue'
 
 // 接口
 import {
-  createCllNewretown,
+  // createCllNewretown,
   cllNewretown,
-  cllNewretownYesterday,
-  cllNewretownModify,
+  // cllNewretownYesterday,
+  // cllNewretownModify,
   cllNewretownUploaded,
-  // createShipNo,
+  createShipNo,
   pagingShipNo,
   createShipping,
   pagingShipping
@@ -547,7 +548,9 @@ export default {
       shipdisplay: false,
       shopId: 0,
       // 选中船舶信息
-      shipInformation: {}
+      shipInformation: {},
+      // 选中船次号
+      selectedNb: {}
     };
   },
   mounted() {
@@ -576,21 +579,22 @@ export default {
         return
       }
       this.joinProtocolSelect.forEach(item => {
-        if (item.value == e) {
-          this.shipName = item.name
+        if (item.id == e) {
+          this.shipName = item.imo
+          this.selectedNb = item
         }
       })
     },
     // 航次查询
     async voyageNbs() {
       let arr = await pagingShipNo({ query: this.shopId })
-      this.voyageNb = arr
+      this.voyageNb = arr || []
       this.joinProtocolSelect = JSON.parse(JSON.stringify(arr))
       this.joinProtocolSelect.push({
           id: 1061601,
           imo: '新航次',
       })
-      this.tabActiveKey = arr[0].id
+      this.tabActiveKey = arr[0]?.id || 0
       this.initData()
     },
     // 查询航行数据
@@ -627,42 +631,45 @@ export default {
      * 处理数据上传
      */
     async secondaryData(beforeArr) {
-      let res = await cllNewretown()
-      let ok = true
-      const that = this
-      if (res.data.sameTime && res.data.sameTime == beforeArr.sameTime && res.data.shipsId == beforeArr.shipsId) {
-        ok = false
-        this.$confirm({
-          title: '当日已上传数据！',
-          content: '是否重新上传数据覆盖？',
-          async onOk() {
-            console.log(1);
-            let resYesterday = await cllNewretownYesterday()
-            const odometer = resYesterday.data.odometer || 0
-            const tFC = resYesterday.data.tFC || 0
-            beforeArr.odometer = beforeArr.mileageDay + odometer
-            beforeArr.tFC = beforeArr.oilConsumption + tFC
-            await cllNewretownModify(beforeArr, beforeArr.sameTime)
-              .then((res) => {
-                console.log(res);
-                that.$message.success('修改成功!')
-                this.init()
-            })
-          },
-        });
-      }
-      if (ok) {
-        const odometer = res.data.odometer || 0
-        const tFC = res.data.tFC || 0
-        beforeArr.odometer = beforeArr.mileageDay + odometer
-        beforeArr.tFC = beforeArr.oilConsumption + tFC
-        await createCllNewretown(beforeArr)
-          .then((resI) => {
-            console.log(resI);
-            that.$message.success('创建成功!')
-                this.init()
-        })
-      }
+      let res = await cllNewretown({sameTime: beforeArr.sameTime})
+      console.log(res);
+      return
+      // let ok = true
+      // const that = this
+      // if (res.data.sameTime && res.data.sameTime == beforeArr.sameTime && res.data.shipsId == beforeArr.shipsId) {
+      //   ok = false
+      //   this.$confirm({
+      //     title: '当日已上传数据！',
+      //     content: '是否重新上传数据覆盖？',
+      //     async onOk() {
+      //       console.log(1);
+      //       let resYesterday = await cllNewretownYesterday()
+      //       const odometer = resYesterday.data.odometer || 0
+      //       const tFC = resYesterday.data.tFC || 0
+      //       beforeArr.odometer = beforeArr.mileageDay + odometer
+      //       beforeArr.tFC = beforeArr.oilConsumption + tFC
+      //       await cllNewretownModify(beforeArr, beforeArr.sameTime)
+      //         .then((res) => {
+      //           console.log(res);
+      //           that.$message.success('修改成功!')
+      //           this.init()
+      //       })
+      //     },
+      //   });
+      // }
+      // if (ok) {
+      //   const odometer = res.data.odometer || 0
+      //   const tFC = res.data.tFC || 0
+      //   beforeArr.odometer = beforeArr.mileageDay + odometer
+      //   beforeArr.tFC = beforeArr.oilConsumption + tFC
+      //   console.log(beforeArr);
+      //   // await createCllNewretown(beforeArr)
+      //   //   .then((resI) => {
+      //   //     console.log(resI);
+      //   //     that.$message.success('创建成功!')
+      //   //         this.init()
+      //   // })
+      // }
     },
     // 获取当前开始时间
     currentStartTime () {
@@ -706,9 +713,9 @@ export default {
     },
     // 关闭弹框
     closeFrame() {
-      console.log(123);
+      console.log(this.handleSubmitForm);
       this.shipNodisplay = false
-      this.$refs['ruleForm'].resetFields() // 重置编辑表单
+      this.handleSubmitForm.resetFields([`details[0].shipsId`]);
     },
      /**
       * 
@@ -716,19 +723,19 @@ export default {
       */
     async shipCancel(e) {
       let arr = e
+      console.log(this.selectedNb);
       arr.beginTime = moment(arr.beginTime).format('YYYY-MM-DD')
       arr.endTime = moment(arr.endTime).format('YYYY-MM-DD')
       arr.shopName = this.shipInformation.username
       arr.shopId = this.shipInformation.id
       arr.mileageTotal = 44553
       arr.mileageRemaining = 44553
-      console.log(arr);
-      // let res = await createShipNo(arr)
-      // // console.log(res.data);
-      // if (res.start !== 200)  return this.$message.error('错误')
-      // this.$message.success('航次号创建成功!')
-      // this.$refs['ruleForm'].resetFields() // 重置编辑表单
-      // this.init()
+      let res = await createShipNo(arr)
+      console.log(res);
+      if (res.start !== 200)  return this.$message.error('错误')
+      this.$message.success('航次号创建成功!')
+      this.handleSubmitForm.resetFields([`details[0].shipsId`]);
+      this.init()
     },
      /**
       * 
@@ -745,7 +752,7 @@ export default {
       * 
       * @description: 创建船舶
       */
-    async ShipCreate(item) {
+    async shipCreates(item) {
       let res = await createShipping(item)
       if (res.start !== 200)  return this.$message.error('船舶创建错误!')
       this.$message.success('船舶创建成功!')
@@ -774,7 +781,8 @@ export default {
      * @description: 船舶选择事件
      */
     customerIdSelect(e) {
-      console.log(e);
+      this.shopId = e
+      this.voyageNbs()
     },
     // 搜索功能
     filterOption(input, option) {
