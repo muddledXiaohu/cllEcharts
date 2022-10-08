@@ -1,6 +1,7 @@
 <template>
   <div>
     <MyTable
+      v-if="operationGroup[1].name == '切换为曲线'"
       class="MyTable"
       @tables="tables"
       @businessGroup="businessGroup"
@@ -19,6 +20,17 @@
       @permissionDelete="permissionDelete"
       :timeEmpty="true"
     />
+    <div v-else>
+      <div style="display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+      ">
+        <a-button type="primary" @click="operationGroup[1].name = '切换为曲线'">
+          切换为表格
+        </a-button>
+      </div>
+      <Chart />
+    </div>
   </div>
 </template>
 <script>
@@ -28,6 +40,8 @@ import {
   channelBusiness,
 } from "@/api/passageway";
 import { baseMixin } from "@/store/app-mixin";
+
+import Chart from './chart.vue'
 
 const columns = [
   // {
@@ -169,15 +183,21 @@ export default {
       buttonGroup: ["查询", "重置"],
       operationGroup: [
         {
-          name: "新建通道商",
-          title: 'save',
+          name: "显示方式",
+          title: 'displayMode',
           disabled: false,
+          select: true,
+          option: [
+            { value: 0, title: "航次" },
+            { value: 1, title: "月" },
+            { value: 2, title: "周" },
+            { value: 3, title: "日" },
+          ]
         },
         {
-          name: '批量导入',
+          name: '切换为曲线',
           title: 'channelBusiness',
           disabled: false,
-          imports: true
         },
       ],
       // 分页
@@ -221,6 +241,7 @@ export default {
   },
   components: {
     MyTable,
+    Chart
   },
   watch: {},
   created() {
@@ -271,17 +292,15 @@ export default {
     },
     // 业务组件
     businessGroup(row, e) {
-      if (e == "新建通道商") {
-        console.log(e);
-      } else if (e == '批量导入') {
-        console.log(e);
+      if (e == '切换为曲线') {
+        this.operationGroup[1].name = '切换为表格'
       }
     },
     // ListOperation
     async ListOperation(row, e) {
       if (e == "name") {
         console.log(row.name);
-        this.$router.push({ name: "chart" , params: {name: row.name}});
+        // this.$router.push({ name: "chart" , params: {name: row.name}});
       }
     },
     // 查询

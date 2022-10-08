@@ -37,6 +37,7 @@ import {
     drawer,
     tabs,
     inputNumber,
+    empty,
 } from 'ant-design-vue';
 Vue.use(Layout)
 Vue.use(Menu)
@@ -73,6 +74,7 @@ Vue.use(space)
 Vue.use(drawer)
 Vue.use(tabs)
 Vue.use(inputNumber)
+Vue.use(empty)
 
 Vue.prototype.$message = message;
 Vue.prototype.$notification = notification;

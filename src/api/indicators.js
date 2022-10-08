@@ -19,6 +19,8 @@ const passageway = {
   createShipping: 'shipping/create',
   // 查询船舶
   pagingShipping: 'shipping/paging',
+  // 最后的行程数据
+  cllNewretownLast: 'cllNewretown/last',
 }
 // 新建行程数据
 export function createCllNewretown (parameter) {
@@ -29,10 +31,11 @@ export function createCllNewretown (parameter) {
   })
 }
   // 查询最新最后数据
-export function cllNewretown () {
+export function cllNewretown (parameter) {
     return request({
       url: passageway.cllNewretown,
-      method: 'GET',
+      method: 'POST',
+      data: parameter
     })
 }
 // 查询前天的数据
@@ -91,3 +94,12 @@ export function createShipping (parameter) {
       data: parameter
     })
   }
+
+// 最后的行程数据
+export function cllNewretownLast (parameter) {
+  return request({
+    url: passageway.cllNewretownLast,
+    method: 'POST',
+    data: parameter
+  })
+}
