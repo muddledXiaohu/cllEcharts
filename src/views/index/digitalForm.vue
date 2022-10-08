@@ -590,7 +590,7 @@ export default {
           id: 1061601,
           imo: '新航次',
       })
-      this.tabActiveKey = arr[0].id
+      this.tabActiveKey = arr[0]?.id
       this.initData()
     },
     // 查询航行数据
