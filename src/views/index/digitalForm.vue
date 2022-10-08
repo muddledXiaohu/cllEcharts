@@ -35,7 +35,6 @@
             :activeKey="tabActiveKey"
             tab-position="left"
             @change="switchTabs"
-            v-if="voyageNb.length != 0 && tabActiveKey != 0"
           >
             <a-tab-pane v-for="it in voyageNb" :key="it.id" :tab="it.imo">
               <div class="explain">
@@ -85,7 +84,7 @@
               />
             </a-tab-pane>
           </a-tabs>
-          <a-empty v-else />
+          <!-- <a-empty v-else /> -->
         </div>
         
       <a-modal
@@ -439,7 +438,7 @@ export default {
       },
       voyageNb: [],
       tabActiveKey: 0,
-      noTitleKey: "tab2",
+      noTitleKey: "tab1",
       customStyle:
         "background: #f7f7f7;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden",
 
