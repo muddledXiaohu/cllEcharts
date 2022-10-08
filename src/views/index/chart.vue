@@ -104,7 +104,7 @@ export default {
         },
       ],
       Inline: {},
-      buttonGroup: ["查询", "重置", '返回'],
+      buttonGroup: ["查询", "重置"],
       // 已选项
       selected: [],
       uname: ''

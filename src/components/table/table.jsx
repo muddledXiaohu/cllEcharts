@@ -260,7 +260,7 @@ export default {
             {a}
           </a-button>) : (<a-button
             type="primary"
-            style="margin-left: 10px;"
+            style="margin-left: 10px;margin-top: 5px;"
             {...{ on: { click: () => { this.search(a) } } }}>
             {a}
           </a-button>)
@@ -269,22 +269,39 @@ export default {
     // 表单增删改查等等等
     let HoperationGroup = null
     if (that.operationGroup) {
+      let selectModel = '航次'
       HoperationGroup = 
       <div class="HoperationGroup">
         <h4>{this.listName ? this.listName : '列表'}</h4>
         <div>
           {
-            that.$directives(that.operationGroup ?? [], true).map(item => {
-              return JSON.stringify(item) != "{}" ?(
-                <a-button
+            // that.$directives(that.operationGroup ?? [], true).map(item => {
+              that.operationGroup.map(item => {
+              return JSON.stringify(item) == "{}" ? null : (
+                item.select ? (
+                  <a-select
+                    vModel={selectModel}
+                    placeholder='请选择'
+                    show-search
+                    allowClear
+                    not-found-content={null}
+                    onSearch={(value)=> {this.displayMode(value)}}
+                    >
+                    {item.option.map(optionItem => {
+                      return (
+                        <a-select-option value={optionItem.value} title={optionItem.title}>
+                          {optionItem.title}
+                        </a-select-option>)
+                    })}
+                  </a-select>) : (<a-button
                   type="primary"
                   style="margin-left: 10px;"
                   disabled={item.disabled ? this.selectedRowKeys.length === 0 : false}
                   {...{ on: { click: () => { this.business(item.name) } } }}
                 >
                   {item.name}
-                </a-button>
-              ) : null
+                </a-button>)
+              )
             })
           }
         </div>
@@ -616,6 +633,11 @@ export default {
         }
       }
       // rangePickerDateFC
+    },
+
+    // table上边下拉选择功能
+    displayMode(value) {
+      console.log(value, 123);
     },
     handleTableChange (pagination, filters, sorter) {
       // console.log(pagination, filters, sorter);

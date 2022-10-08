@@ -6,8 +6,8 @@ import { constantRouterMap, asyncRouterMap } from '@/config/router.config'
 
 let arr = [
   {title: '第一版', name: 'index', id: 1, key: 'index', icon: 'team', children:[
-    {title:'记录', name: 'digitalForm', icon: 'user-add', key: '/index/digitalForm'},
-    {title:'指标', name: 'indicators', icon: 'user', key: '/index/indicators'},
+    {title:'页面1', name: 'digitalForm', icon: 'user-add', key: '/index/digitalForm'},
+    // {title:'指标', name: 'indicators', icon: 'user', key: '/index/indicators'},
     // {title:'图表', name: 'chart', icon: 'user', key: '/index/chart'},
   ]},
   // {title: '开户管理', name: 'user', id: 2, key: 'user', icon: 'user-add', children:[

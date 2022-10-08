@@ -7,7 +7,7 @@
       :active-tab-key="noTitleKey"
       @tabChange="(key) => onTabChange(key)"
     >
-      <div>
+      <div v-if="noTitleKey == 'tab1'">
         <div class="popUpHeader">
           <!-- <h2>{{$t('user.login.tab-login-credentials')}}</h2> -->
           <a-select
@@ -71,12 +71,11 @@
                   }}</a-descriptions-item>
                 </a-descriptions>
               </div>
-              <div style="
-                margin-top: 10px;
+              <div style="margin-top: 10px;
                 display: flex;
                 flex-direction: row;
                 justify-content: flex-end;">
-                <a-button type="primary" @click="createShip">新增午报数据</a-button>  
+                <a-button type="primary" @click="() => {formVisible = true}">新增午报数据</a-button>  
               </div>
               <MyTable
                 class="MyTable"
@@ -87,14 +86,28 @@
             </a-tab-pane>
           </a-tabs>
           <a-empty v-else />
-          <a-form
+        </div>
+        
+      <a-modal
+        :visible="formVisible"
+        title="午报数据"
+        ok-text="提交"
+        cancel-text="取消"
+        :confirm-loading="false"
+        :maskClosable="false"
+        :width="'60%'"
+        @ok="handleSubmit"
+        @cancel="handleCancel"
+      >
+
+      <a-form
             :form="handleSubmitForm"
             @submit="handleSubmit"
             ref="ruleForm"
             labelAlign="right"
             layout="horizontal"
             v-bind="formItemLayout"
-            :label-col="{ span: 4 }" :wrapper-col="{ span: 12 }"
+            :label-col="{ span: 6 }" :wrapper-col="{ span: 12 }"
           >
           <a-row>
             <a-col :span="12">
@@ -103,7 +116,7 @@
                   placeholder="请选择"
                   @change="changeshipsId"
                   v-decorator="[
-                    'details[' + idx + '].shipsId',
+                    'details[' + 0 + '].shipsId',
                     {
                       rules: [
                         {
@@ -127,7 +140,59 @@
               </a-form-item>
             </a-col>
             <a-col :span="12">
+              <a-form-item  label="请选择燃油信息">
+                <a-select
+                  placeholder="请选择"
+                  @change="changeFuelType"
+                  v-decorator="[
+                    'details[' + 0 + '].fuelType',
+                    {
+                      rules: [
+                        {
+                          type: 'string',
+                          required: true,
+                          message: '请选择燃油信息！',
+                          trigger: 'change',
+                        },
+                      ],
+                    },
+                  ]"
+                >
+                  <a-select-option
+                    v-for="(it, id) in fuelType"
+                    :key="id"
+                    :value="it.value"
+                  >
+                    {{ it.label }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
             </a-col>
+          </a-row>
+          <a-row v-if="selectedFuelType" style="margin-left: 30px;">
+            <h3>燃油属性</h3>
+            <a-col :span="6">
+              <a-form-item label="燃油信息1">
+                <span class="parameter">参数1</span>
+              </a-form-item>
+            </a-col>
+            <a-col :span="6">
+              <a-form-item label="燃油信息2">
+                <span class="parameter">参数2</span>
+              </a-form-item>
+            </a-col>
+            <a-col :span="6">
+              <a-form-item label="燃油信息3">
+                <span class="parameter">参数3</span>
+              </a-form-item>
+            </a-col>
+            <a-col :span="6">
+              <a-form-item label="燃油信息4">
+                <span class="parameter">参数4</span>
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row>
             <a-col :span="12">
               <a-form-item  label="当日里程">
                 <a-input-number
@@ -136,7 +201,7 @@
                   :maxLength="4"
                   :step="0.1"
                   v-decorator="[
-                    'details[' + idx + '].mileageDay',
+                    'details[' + 0 + '].mileageDay',
                     {
                       rules: [
                         {
@@ -159,13 +224,58 @@
                   :maxLength="4"
                   :step="0.1"
                   v-decorator="[
-                    'details[' + idx + '].oilConsumption',
+                    'details[' + 0 + '].oilConsumption',
                     {
                       rules: [
                         {
                           type: 'number',
                           required: true,
                           message: '请输入当日燃油消耗(ton)！',
+                          trigger: 'blur',
+                        },
+                      ],
+                    },
+                  ]"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item label="请选择装载状态">
+                <a-select
+                    placeholder="请选择"
+                    v-decorator="[
+                      'details[' + 0 + '].loadingStatus',
+                      {
+                        rules: [
+                          {
+                            type: 'number',
+                            required: true,
+                            message: '请选择装载状态！',
+                            trigger: 'change',
+                          },
+                        ],
+                      },
+                    ]"
+                  >
+                    <a-select-option :value="1">满载</a-select-option>
+                    <a-select-option :value="2">未满</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item  label="航速">
+                <a-input-number
+                  style="width: 100%;"
+                  placeholder="航速"
+                  :maxLength="4"
+                  v-decorator="[
+                    'details[' + 0 + '].speed',
+                    {
+                      rules: [
+                        {
+                          type: 'number',
+                          required: true,
+                          message: '请输入航速！',
                           trigger: 'blur',
                         },
                       ],
@@ -183,7 +293,7 @@
                   valueFormat="YYYY-MM-DD"
                   disabled
                   v-decorator="[
-                    'details[' + idx + '].sameTime',
+                    'details[' + 0 + '].sameTime',
                     {
                       initialValue: currentStartTime(),
                       rules: [
@@ -200,12 +310,10 @@
             </a-col>
           </a-row>
           </a-form>
-        </div>
-        <div class="operation">
-          <a-button size="large" type="primary" @click="handleSubmit"
-            >提交</a-button
-          >
-        </div>
+      </a-modal>
+      </div>
+      <div v-else-if="noTitleKey == 'tab2'">
+          <Indicators />
       </div>
     </a-card>
     <!-- 创建航次号 -->
@@ -229,9 +337,11 @@ import MyTable from "@/components/table/table.jsx";
 import ShipSailing from "./components/shipSailing.vue";
 import ShipCreate from "./components/shipCreate.vue";
 
+import Indicators from './indicators.vue'
+
 // 接口
 import {
-  // createCllNewretown,
+  createCllNewretown,
   cllNewretown,
   cllNewretownYesterday,
   cllNewretownModify,
@@ -291,6 +401,7 @@ export default {
     MyTable,
     ShipSailing,
     ShipCreate,
+    Indicators
   },
   data() {
     return {
@@ -302,20 +413,12 @@ export default {
         },
         {
           key: "tab2",
-          tab: "Schedule",
+          tab: "Cll 计算",
         },
         {
           key: "tab3",
-          tab: "Events",
-        },
-        {
-          key: "tab4",
-          tab: "Officers",
-        },
-        {
-          key: "tab5",
-          tab: "Reports",
-        },
+          tab: "报告"
+        }
       ],
       data: [],
       // 分页
@@ -336,7 +439,7 @@ export default {
       },
       voyageNb: [],
       tabActiveKey: 0,
-      noTitleKey: "tab1",
+      noTitleKey: "tab2",
       customStyle:
         "background: #f7f7f7;border-radius: 4px;margin-bottom: 24px;border: 0;overflow: hidden",
 
@@ -373,6 +476,20 @@ export default {
       shipInformation: {},
       // 选中船次号
       selectedNb: {},
+      fuelType: [
+        { value: "Diesel", label: "柴油" },
+        { value: "Gas Oil", label: "轻柴油" },
+        { value: "LFO", label: "轻质燃料油" },
+        { value: "HFO", label: "重质燃料油" },
+        { value: "Propane", label: "丙烷" },
+        { value: "Butane", label: "丁烷" },
+        { value: "LNG", label: "液化天然气" },
+        { value: "Methanol", label: "甲醇" },
+        { value: "Ethanol", label: "乙醇" },
+        { value: "other", label: "其他" },
+      ],
+      selectedFuelType: '',
+      formVisible: false
     };
   },
   mounted() {
@@ -406,6 +523,10 @@ export default {
           this.selectedNb = item;
         }
       });
+    },
+    changeFuelType(e) {
+      console.log(e);
+      this.selectedFuelType = e
     },
     // 航次查询
     async voyageNbs() {
@@ -486,13 +607,12 @@ export default {
         const tFC = ress.data.tFC || 0;
         beforeArr.odometer = beforeArr.mileageDay + odometer;
         beforeArr.tFC = beforeArr.oilConsumption + tFC;
-        console.log(beforeArr);
-        // await createCllNewretown(beforeArr)
-        //   .then((resI) => {
-        //     console.log(resI);
-        //     that.$message.success('创建成功!')
-        //         this.init()
-        // })
+        await createCllNewretown(beforeArr)
+          .then((resI) => {
+            console.log(resI);
+            that.$message.success('创建成功!')
+            this.init()
+        })
       }
     },
     // 获取当前开始时间
@@ -527,6 +647,12 @@ export default {
     switchTabs(e) {
       this.tabActiveKey = e;
       this.initData();
+    },
+    
+    handleCancel() {
+      this.handleSubmitForm.resetFields() // 重置编辑表单
+      this.selectedFuelType = ''
+      this.formVisible = false
     },
     /**
      *
@@ -678,6 +804,9 @@ export default {
   overflow-x: hidden;
   overflow-y: visible;
   height: 89%;
+  .parameter {
+    padding-left: 40px;
+  }
 }
 .accountDetailed {
   // background-color: #f7f7f7;
@@ -719,16 +848,6 @@ export default {
 }
 /deep/.xhBody .ant-form-item-control-wrapper {
   width: 100%;
-}
-.operation {
-  margin: 15px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  button {
-    margin-left: 30px;
-    padding: 0 30px;
-  }
 }
 .explain {
   width: 100%;
