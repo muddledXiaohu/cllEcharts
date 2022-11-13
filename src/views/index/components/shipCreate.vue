@@ -17,16 +17,51 @@
                 :rules="rules">
                 <a-row class="form-row" :gutter="16">
                     <!-- 船名 -->
-                    <a-col :lg="{ span: 8 }" :md="{ span: 8 }" :sm="20">
-                        <a-form-model-item label="船名" prop="username">
+                    <a-col :span="12">
+                        <a-form-model-item label="船名" prop="IMO">
                         <a-input
                             :maxLength="20"
-                            v-model="handleSubmitForm.username"
+                            v-model="handleSubmitForm.IMO"
                             placeholder="船名"
                         />
                         </a-form-model-item>
                     </a-col>
+                    <a-col :span="12">
+                    <a-form-item  label="请选择燃油信息">
+                        <a-select
+                        placeholder="请选择"
+                        mode="multiple"
+                        v-model="handleSubmitForm.fuelType"
+                        >
+                        <a-select-option
+                            v-for="(it, id) in fuelType"
+                            :key="id"
+                            :value="it.value"
+                        >
+                            {{ it.label }}
+                        </a-select-option>
+                        </a-select>
+                    </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                    <!-- <a-form-item  label="燃油消耗量">
+                        <a-input-number
+                        style="width: 100%;"
+                        placeholder="燃油消耗量"
+                        :maxLength="12"
+                        :step="1"
+                        v-model="handleSubmitForm.capacity"
+                        />
+                    </a-form-item> -->
+                    </a-col>
                 </a-row>
+                <!-- handleSubmitForm.fuelType -->
+                <CreateTable
+                    class="createTable"
+                    :data="handleSubmitForm.fuelType"
+                    :columns="columns"
+                    :vModelData="handleSubmitForm.vModelData"
+                />
             </a-form-model>
 
         </a-modal>
@@ -34,22 +69,30 @@
   </template>
   <script>
   import { baseMixin } from "@/store/app-mixin";
+  import { fuelType, columns } from "./data";
+  import CreateTable from "@/components/table/createTable.jsx";
   export default {
     mixins: [baseMixin],
     name: "",
+    components: {
+        CreateTable
+    },
     data() {
       return {
         confirmLoading: false,
         handleSubmitForm: {
-            username: "",
+            IMO: "",
+            fuelType: [
+            "LFO", "HFO"
+            ],
+            vModelData:{}
         },
         rules: {
-            username: [{ required: true, message: '请输入船名', trigger: 'blur' }],
+            IMO: [{ required: true, message: '请输入船名', trigger: 'blur' }],
         },
+          fuelType,
+          columns,
       };
-    },
-    components: {
-
     },
     props: {
         shipdisplay: {
@@ -69,7 +112,10 @@
         handleOk() {
             this.$refs.ruleForm.validate(valid => {
                 if (valid) {
-                    this.$emit("shipCancel", this.handleSubmitForm);
+                    this.$emit("shipCancel", {
+                        IMO: this.handleSubmitForm.IMO,
+                        vModelData: this.handleSubmitForm.vModelData,
+                    });
                     this.handleCancel()
                 } else {
                     return false;

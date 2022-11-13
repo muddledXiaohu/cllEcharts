@@ -17,50 +17,52 @@
                 :rules="rules">
                 <a-row class="form-row" :gutter="16">
                     <!-- 船名 -->
-                    <a-col :lg="{ span: 8 }" :md="{ span: 8 }" :sm="20">
+                    <a-col :lg="{ span: 12 }" :md="{ span: 12 }" :sm="20">
                         <a-form-model-item label="船名">
-                        <a-input
-                            :maxLength="20"
-                            disabled
-                            v-model="shipInformation.username"
-                            placeholder="船名"
-                        />
+                            <a-input
+                                :maxLength="20"
+                                disabled
+                                v-model="shipInformation.IMO"
+                                placeholder="IMO"
+                            />
                         </a-form-model-item>
                     </a-col>
-                    <!-- IMO -->
-                    <a-col :lg="{ span: 8 }" :md="{ span: 8 }" :sm="20">
-                        <a-form-model-item label="IMO" prop="imo">
-                        <a-input
-                            :maxLength="20"
-                            v-model="handleSubmitForm.imo"
-                            placeholder="IMO"
-                        />
+                    <!-- 航次号 -->
+                    <a-col :lg="{ span: 12 }" :md="{ span: 12 }" :sm="20">
+                        <a-form-model-item label="航次号" prop="Voyage">
+                            <a-input
+                                :maxLength="20"
+                                v-model="handleSubmitForm.Voyage"
+                                placeholder="航次号"
+                            />
                         </a-form-model-item>
                     </a-col>
                     <!-- 出发港 -->
-                    <a-col :lg="{ span: 8 }" :md="{ span: 8 }" :sm="20">
+                    <a-col :lg="{ span: 12 }" :md="{ span: 12 }" :sm="20">
                         <a-form-model-item label="出发港" prop="setPort">
-                        <a-input
-                            :maxLength="20"
-                            v-model="handleSubmitForm.setPort"
-                            placeholder="出发港"
-                        />
+                            <a-select
+                                v-model="handleSubmitForm.setPort"
+                                style="width: 100%"
+                                :options="harbors"
+                                placeholder="出发港"
+                            ></a-select>
+                        </a-form-model-item>
+                    </a-col>
+                    <!-- 终到港 -->
+                    <a-col :lg="{ span: 12 }" :md="{ span: 12 }" :sm="20">
+                        <a-form-model-item label="终到港" prop="endPort">
+                            <a-select
+                                v-model="handleSubmitForm.endPort"
+                                style="width: 100%"
+                                :options="harbors"
+                                placeholder="终到港"
+                            ></a-select>
                         </a-form-model-item>
                     </a-col>
                 </a-row>
                 <a-row class="form-row" :gutter="16">
-                    <!-- 终到港 -->
-                    <a-col :lg="{ span: 8 }" :md="{ span: 8 }" :sm="20">
-                        <a-form-model-item label="终到港" prop="endPort">
-                        <a-input
-                            :maxLength="20"
-                            v-model="handleSubmitForm.endPort"
-                            placeholder="终到港"
-                        />
-                        </a-form-model-item>
-                    </a-col>
                     <!-- 出发日期 -->
-                    <a-col :lg="{ span: 8 }" :md="{ span: 8 }" :sm="20">
+                    <a-col :lg="{ span: 12 }" :md="{ span: 12 }" :sm="20">
                         <a-form-model-item prop="beginTime" label="出发日期">
                         <a-date-picker
                             placeholder="出发日期"
@@ -69,35 +71,12 @@
                         </a-form-model-item>
                     </a-col>
                     <!-- 到港日期 -->
-                    <a-col :lg="{ span: 8 }" :md="{ span: 8 }" :sm="20">
+                    <a-col :lg="{ span: 12 }" :md="{ span: 12 }" :sm="20">
                         <a-form-model-item prop="endTime" label="到港日期">
                         <a-date-picker
                             placeholder="到港日期"
                             format="YYYY-MM-DD"
                             v-model="handleSubmitForm.endTime" />
-                        </a-form-model-item>
-                    </a-col>
-                </a-row>
-
-                <a-row class="form-row" :gutter="16">
-                    <!-- 经度 -->
-                    <a-col :lg="{ span: 8 }" :md="{ span: 8 }" :sm="20">
-                        <a-form-model-item label="经度" prop="longitude">
-                        <a-input-number
-                        :min="0"
-                        :step="0.01"
-                        v-model="handleSubmitForm.longitude"
-                        placeholder="经度" />
-                        </a-form-model-item>
-                    </a-col>
-                    <!-- 纬度 -->
-                    <a-col :lg="{ span: 8 }" :md="{ span: 8 }" :sm="20">
-                        <a-form-model-item label="纬度" prop="latitude">
-                        <a-input-number
-                        :min="0"
-                        :step="0.01"
-                        v-model="handleSubmitForm.latitude"
-                        placeholder="纬度" />
                         </a-form-model-item>
                     </a-col>
                 </a-row>
@@ -107,7 +86,8 @@
     </div>
   </template>
   <script>
-  import { baseMixin } from "@/store/app-mixin";
+import { baseMixin } from "@/store/app-mixin";
+  import { harbors } from "./data";
   export default {
     mixins: [baseMixin],
     name: "",
@@ -115,25 +95,21 @@
       return {
         confirmLoading: false,
         handleSubmitForm: {
-            imo: '',
             setPort: '',
             endPort: '',
             beginTime: '',
             endTime: '',
-            longitude: '',
-            latitude: ''
+            Voyage: '',
         },
         rules: {
-            imo: [{ required: true, message: '请输入IMO', trigger: 'blur' }],
+            Voyage: [{ required: true, message: '请输入航次号', trigger: 'blur' }],
             setPort: [{ required: true, message: '请输入出发港', trigger: 'blur' }],
             endPort: [{ required: true, message: '请输入终到港', trigger: 'blur' }],
-            longitude: [{ required: true, message: '请输入经度', trigger: 'blur' }],
-            latitude: [{ required: true, message: '请输入纬度', trigger: 'blur' }],
             beginTime: [{ required: true, message: '请选择出发日期', trigger: 'change' }],
             endTime: [{ required: true, message: '请选择到港日期', trigger: 'change' }],
-            // customerId: [{ required: true, message: '请选择客户', trigger: 'change' }],
-        },
-      };
+          },
+        harbors,
+        };
     },
     components: {
 
@@ -159,7 +135,10 @@
         handleOk() {
             this.$refs.ruleForm.validate(valid => {
                 if (valid) {
-                    this.$emit("shipCancel", this.handleSubmitForm);
+                    let arr = JSON.parse(JSON.stringify(this.handleSubmitForm))
+                    arr.setPort = harbors.filter(item=>{return item.value == arr.setPort})[0]
+                    arr.endPort = harbors.filter(item=>{return item.value == arr.endPort})[0]
+                    this.$emit("shipCancel", arr);
                     this.handleCancel()
                 } else {
                     return false;

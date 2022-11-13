@@ -21,6 +21,10 @@ const passageway = {
   pagingShipping: 'shipping/paging',
   // 最后的行程数据
   cllNewretownLast: 'cllNewretown/last',
+  // 上传
+  analysisExcel: 'analysisExcel',
+  // 查询上传内容
+  pagingAim: '/aim/paging',
 }
 // 新建行程数据
 export function createCllNewretown (parameter) {
@@ -99,6 +103,26 @@ export function createShipping (parameter) {
 export function cllNewretownLast (parameter) {
   return request({
     url: passageway.cllNewretownLast,
+    method: 'POST',
+    data: parameter
+  })
+}
+// 上传
+export function analysisExcel (parameter) {
+  return request({
+    url: passageway.analysisExcel,
+    method: 'POST',
+    data: parameter,
+    headers: { 
+      'Content-Type': 'multipart/form-data'
+    },
+  })
+}
+
+// 查询上传内容
+export function pagingAim (parameter) {
+  return request({
+    url: passageway.pagingAim,
     method: 'POST',
     data: parameter
   })
