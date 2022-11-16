@@ -77,6 +77,12 @@ export const asyncRouterMap = [
         component: () => import(/* webpackChunkName: "chart" */ '@/views/index/chart'),
         meta: { title: 'chart' }
       },
+      {
+        path: 'sailingTable',
+        name: 'sailingTable',
+        component: () => import(/* webpackChunkName: "sailingTable" */ '@/views/index/sailingTable'),
+        meta: { title: 'sailingTable' }
+      },
     ]
   },
   // {

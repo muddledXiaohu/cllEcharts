@@ -19,6 +19,8 @@ const passageway = {
   createShipping: 'shipping/create',
   // 查询船舶
   pagingShipping: 'shipping/paging',
+  // 查询船舶分页
+  shippingPagePaging: '/shippingPage/paging',
   // 最后的行程数据
   cllNewretownLast: 'cllNewretown/last',
   // 上传
@@ -94,6 +96,15 @@ export function createShipping (parameter) {
   export function pagingShipping (parameter) {
     return request({
       url: passageway.pagingShipping,
+      method: 'POST',
+      data: parameter
+    })
+  }
+  
+  // 查询船舶分页
+  export function shippingPagePaging (parameter) {
+    return request({
+      url: passageway.shippingPagePaging,
       method: 'POST',
       data: parameter
     })

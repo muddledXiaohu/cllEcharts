@@ -102,6 +102,7 @@ export default {
           this.arrs.push(element)
         }
       });
+      console.log(this.arrs);
       // routeListArr
       // this.names = JSON.parse(decodeURIComponent(window.atob(storage.get(ACCESS_ROLEID)))).name
     },

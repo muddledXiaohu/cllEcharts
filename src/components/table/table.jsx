@@ -317,7 +317,7 @@ export default {
       <div>
         {collapses}
         <div>
-          <span style="margin-left: 8px">
+          <span>
             {this.hasSelected ? `已选择 ${this.selectedRowKeys.length} 项` : ''}
           </span>
           {this.hasSelected ?
