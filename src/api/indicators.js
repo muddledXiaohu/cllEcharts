@@ -2,9 +2,9 @@ import request from '@/utils/request'
 
 const passageway = {
   // 新建行程数据
-  createCllNewretown: 'cllNewretown/create',
+  createAim: 'aim/create',
   // 查询最新最后数据
-  cllNewretown: 'cllNewretown',
+  aimYester: 'aimYester',
   // 查询前天的数据
   cllNewretownYesterday: 'cllNewretown/yesterday',
   // 修改行程数据
@@ -20,26 +20,30 @@ const passageway = {
   // 查询船舶
   pagingShipping: 'shipping/paging',
   // 查询船舶分页
-  shippingPagePaging: '/shippingPage/paging',
+  shippingPagePaging: 'shippingPage/paging',
   // 最后的行程数据
   cllNewretownLast: 'cllNewretown/last',
   // 上传
   analysisExcel: 'analysisExcel',
   // 查询上传内容
-  pagingAim: '/aim/paging',
+  pagingAim: 'aim/paging',
+  // 查询船次号最后一次数据
+  aimYesterday: 'aimYesterday',
+  // 查询上次结束航次号
+  shipNoYesterday: 'shipNoYesterday'
 }
 // 新建行程数据
-export function createCllNewretown (parameter) {
+export function createAim (parameter) {
   return request({
-    url: passageway.createCllNewretown,
+    url: passageway.createAim,
     method: 'POST',
     data: parameter
   })
 }
   // 查询最新最后数据
-export function cllNewretown (parameter) {
+export function aimYester (parameter) {
     return request({
-      url: passageway.cllNewretown,
+      url: passageway.aimYester,
       method: 'POST',
       data: parameter
     })
@@ -52,9 +56,9 @@ export function cllNewretownYesterday () {
     })
 }
 // 修改行程数据
-export function cllNewretownModify (parameter, sameTime) {
+export function cllNewretownModify (parameter) {
   return request({
-    url: passageway.cllNewretownModify+sameTime,
+    url: passageway.cllNewretownModify,
     method: 'POST',
     data: parameter
   })
@@ -136,5 +140,20 @@ export function pagingAim (parameter) {
     url: passageway.pagingAim,
     method: 'POST',
     data: parameter
+  })
+}
+// 查询船次号最后一次数据
+export function aimYesterday (parameter) {
+  return request({
+    url: passageway.aimYesterday,
+    method: 'POST',
+    data: parameter
+  })
+}
+// 查询上次结束航次号
+export function shipNoYesterday () {
+  return request({
+    url: passageway.shipNoYesterday,
+    method: 'GET',
   })
 }

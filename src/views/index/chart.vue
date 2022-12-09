@@ -1,14 +1,14 @@
 <template>
 <div>
 
-    <Condition
+    <!-- <Condition
       class="Condition"
       :condition="condition"
       @tables="tables"
       :Inline="Inline"
       :buttonGroup="buttonGroup"
       :timeEmpty="true"
-    />
+    /> -->
     <div class="introduce">
       <div id="gauge" class="gauge"></div>
       <div class="sameDay">
@@ -75,7 +75,7 @@
 <script>
 import { init } from 'echarts';
 import echartsDt from './one'
-import Condition from "@/components/table/condition.jsx";
+// import Condition from "@/components/table/condition.jsx";
 export default {
   name: "echarts",
   data() {
@@ -111,7 +111,7 @@ export default {
     };
   },
   components: {
-    Condition,
+    // Condition,
   },
   watch: {
     // '$route.params.name'() {

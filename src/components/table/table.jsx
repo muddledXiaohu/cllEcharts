@@ -269,10 +269,10 @@ export default {
     // 表单增删改查等等等
     let HoperationGroup = null
     if (that.operationGroup) {
-      let selectModel = '航次'
+      // let selectModel = ''
       HoperationGroup = 
       <div class="HoperationGroup">
-        <h4>{this.listName ? this.listName : '列表'}</h4>
+        <h4>{this.listName ? this.listName : ''}</h4>
         <div>
           {
             // that.$directives(that.operationGroup ?? [], true).map(item => {
@@ -280,12 +280,13 @@ export default {
               return JSON.stringify(item) == "{}" ? null : (
                 item.select ? (
                   <a-select
-                    vModel={selectModel}
+                    vModel={ item.vModels}
                     placeholder='请选择'
+                    style="margin: 0 6px;width: 140px;"
                     show-search
                     allowClear
                     not-found-content={null}
-                    onSearch={(value)=> {this.displayMode(value)}}
+                    onChange={(value)=> {this.displayMode(value, item.title)}}
                     >
                     {item.option.map(optionItem => {
                       return (
@@ -295,7 +296,7 @@ export default {
                     })}
                   </a-select>) : (<a-button
                   type="primary"
-                  style="margin-left: 10px;"
+                  style="margin: 0 6px;"
                   disabled={item.disabled ? this.selectedRowKeys.length === 0 : false}
                   {...{ on: { click: () => { this.business(item.name) } } }}
                 >
@@ -636,8 +637,8 @@ export default {
     },
 
     // table上边下拉选择功能
-    displayMode(value) {
-      console.log(value, 123);
+    displayMode(value, title) {
+      this.$emit('businessGroup', value, title)
     },
     handleTableChange (pagination, filters, sorter) {
       // console.log(pagination, filters, sorter);

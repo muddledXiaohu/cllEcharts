@@ -2,7 +2,10 @@
   <div class="sailingTb">
     <div class="tables">
       <div class="leftCard">
-        <div :class="[idx== selectedIdx ? 'checkedCard' : '']" v-for="(item,idx) in sailingShip" :key="idx">
+        <div
+          @click="selecteditem(item, idx)"
+          :class="[idx== selectedIdx ? 'checkedCard' : '']"
+          v-for="(item,idx) in sailingShip" :key="idx">
             <span class="items">{{item.IMO}}</span>
             <a-divider />
         </div>
@@ -20,11 +23,8 @@
                 style="width:300px;"
                 v-model="formInline.region"
                 placeholder="航次号">
-                    <a-select-option value="1">
-                        1
-                    </a-select-option>
-                    <a-select-option value="2">
-                        2
+                    <a-select-option v-for="(it, idx) in arrShipNo" :key="idx" :value="it.id">
+                      {{it.Voyage}}
                     </a-select-option>
                 </a-select>
             </a-form-model-item>
@@ -64,6 +64,7 @@ import MyTable from "@/components/table/table.jsx";
 import {
   pagingAim,
   shippingPagePaging,
+  pagingShipNo,
 } from "@/api/indicators";
 export default {
   components: {
@@ -101,7 +102,9 @@ export default {
       // 航船分页
       sailingShip: [],
       // 当前选中航船
-      selectedIdx: 0
+      selectedItem: {},
+      selectedIdx: 0,
+      arrShipNo: {}
     };
   },
   watch: {},
@@ -116,17 +119,35 @@ export default {
     async initData() {
       let arrs = await shippingPagePaging({
         pagenum: 1,
-        pagesize: 10,
+        pagesize: 100,
       });
-      this.sailingShip=arrs.data
-      console.log(arrs);
-      this.pageParam.query = 1;
+      this.sailingShip = arrs.data
+      this.selectedItem = arrs.data[0]
+      this.inits()
+    },
+    // 分页事件
+    async switchpage(current, pageSize) {
+      this.pageParam.pagenum = current
+      this.pageParam.pagesize = pageSize
+      this.inits()
+    },
+    selecteditem(item, idx) {
+      console.log(item, idx);
+      this.selectedIdx = idx
+      this.selectedItem = item
+      this.inits()
+    },
+    async inits() {
+      let arrShipNos = await pagingShipNo({ query: this.selectedItem?.id });
+      this.arrShipNo = arrShipNos
+      this.formInline.region = arrShipNos[0]?.id
+      this.pageParam.query = this.formInline.region;
       let arr = await pagingAim(this.pageParam);
       this.data = arr.data;
       this.pagination.total = arr.totalpage;
       this.pagination.pageSize = arr.pagesize;
       this.pagination.current = arr.pagenum;
-    },
+    }
   },
 };
 </script>

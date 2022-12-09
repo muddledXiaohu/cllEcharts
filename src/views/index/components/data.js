@@ -46,7 +46,7 @@ export const digitalFormcolumns = [
   },
   {
     title: "航次号",
-    dataIndex: "Voyage_From",
+    dataIndex: "Voyage_To",
   },
   {
     title: "经度时（未格式化）",
@@ -85,3 +85,13 @@ export const digitalFormcolumns = [
     dataIndex: "MGO_ROB",
   },
 ];
+export const coordinatesConvertDegreeMinuteSecond= (coordinates)=> {
+  const coords = String(coordinates).split('.');
+  const degree = coords[0];
+  const mArr = String((Number(String(0+'.'+coords[1]))*60)).split('.');
+  const minute = mArr[0];
+  // 秒 通过获取数组第二位进行计算生成秒  截取小数点后两位
+  // const second = (Number(String(0+'.'+mArr[1]))*60).toFixed(2);
+  const result = [degree, minute];
+  return result;
+}

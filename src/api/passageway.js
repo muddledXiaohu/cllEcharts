@@ -25,6 +25,8 @@ const passageway = {
   freezeChannel: 'channel/freeze',
   // 启用通道
   recoverChannel: 'channel/recover',
+  // 数据分页
+  calculationPaging: 'calculation/paging'
 }
 // 查询通道商列表
 export function channelBusiness (parameter) {
@@ -119,5 +121,13 @@ export function uploadFiles (parameter) {
     return request({
       url: `${passageway.recoverChannel}/${parameter}`,
       method: 'GET'
+    })
+  }
+  // 数据分页
+  export function calculationPaging (parameter) {
+    return request({
+      url: passageway.calculationPaging,
+      method: 'POST',
+      data: parameter
     })
   }

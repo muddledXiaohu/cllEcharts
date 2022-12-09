@@ -1,7 +1,7 @@
 <template>
   <div>
     <MyTable
-      v-if="operationGroup[1].name == '切换为曲线'"
+      v-if="operationGroup[0].name == '切换为曲线'"
       class="MyTable"
       @tables="tables"
       @businessGroup="businessGroup"
@@ -25,7 +25,7 @@
         flex-direction: row;
         justify-content: flex-end;
       ">
-        <a-button type="primary" @click="operationGroup[1].name = '切换为曲线'">
+        <a-button type="primary" @click="operationGroup[0].name = '切换为曲线'">
           切换为表格
         </a-button>
       </div>
@@ -37,8 +37,12 @@
 import MyTable from "@/components/table/table.jsx";
 // 接口
 import {
-  channelBusiness,
+  calculationPaging,
 } from "@/api/passageway";
+import {
+  pagingShipping,
+  pagingShipNo,
+} from "@/api/indicators";
 import { baseMixin } from "@/store/app-mixin";
 
 import Chart from './chart.vue'
@@ -50,143 +54,113 @@ const columns = [
   //   title: "编号",
   // },
   {
-    title: "Vessel Name",
-    dataIndex: "name",
-    scopedSlots: { customRender: "id" },
-    // scopedSlots: { customRender: "id" },
-  },
-  {
     title: "IMO",
-    dataIndex: "imo",
+    dataIndex: "IMO",
+    scopedSlots: { customRender: "id" },
   },
   {
-    title: "Capacity in Cll calculation",
-    dataIndex: "cincllc",
+    title: "航次号",
+    dataIndex: "Voyage_To",
   },
   {
-    title: "Deadweight/Gross Tonnage(mt)",
-    dataIndex: "tonnage",
+    title: "当日里程（mile）",
+    dataIndex: "Distance",
   },
   {
-    title: "Distance sailed(nm)",
-    dataIndex: "sailed",
+    title: "累计里程",
+    dataIndex: "CumulativeDistance",
   },
   {
-    title: "CO2 emitted(mt)",
-    dataIndex: "co2",
+    title: "当日燃油消耗(ton)",
+    dataIndex: "ME_Consumption",
   },
   {
-    title: "cll Trend(3 adys-avg)",
-    dataIndex: "trend",
-    scopedSlots: { customRender: "cllTrend" },
+    title: "累计油耗",
+    dataIndex: "CumulativeME_Consumption",
   },
   {
-    title: 'Cll(gCO2/(nm * mt))',
-    children: [
-      {
-        title: 'Attained',
-        dataIndex: 'attained'
-      },
-      {
-        title: 'Required',
-        dataIndex: 'required'
-      },
-    ]
+    title: "M",
+    dataIndex: "M",
   },
   {
-    title: "Deviation in %",
-    dataIndex: "deviation",
+    title: "W",
+    dataIndex: "W",
   },
   {
-    title: "Arrained Rating YTD",
-    dataIndex: "arrained",
-    scopedSlots: { customRender: "tagging" },
+    title: "Attained CII",
+    dataIndex: "AttainedCII",
   },
-  {
-    title: "Projected Rating next year",
-    dataIndex: "nextYear",
-    scopedSlots: { customRender: "tagging" },
-  },
-  {
-    title: "Projected year of deterioration",
-    dataIndex: "deterioration",
-    scopedSlots: { customRender: "tagging" },
-  },
+  // {
+  //   title: "cll Trend(3 adys-avg)",
+  //   dataIndex: "trend",
+  //   scopedSlots: { customRender: "cllTrend" },
+  // },
+  // {
+  //   title: 'Cll(gCO2/(nm * mt))',
+  //   children: [
+  //     {
+  //       title: 'Attained',
+  //       dataIndex: 'attained'
+  //     },
+  //     {
+  //       title: 'Required',
+  //       dataIndex: 'required'
+  //     },
+  //   ]
+  // },
+  // {
+  //   title: "Deviation in %",
+  //   dataIndex: "deviation",
+  // },
+  // {
+  //   title: "Arrained Rating YTD",
+  //   dataIndex: "arrained",
+  //   scopedSlots: { customRender: "tagging" },
+  // },
+  // {
+  //   title: "Projected Rating next year",
+  //   dataIndex: "nextYear",
+  //   scopedSlots: { customRender: "tagging" },
+  // },
+  // {
+  //   title: "Projected year of deterioration",
+  //   dataIndex: "deterioration",
+  //   scopedSlots: { customRender: "tagging" },
+  // },
 ];
 export default {
   mixins: [baseMixin],
   name: "channelBusiness",
   data() {
     return {
-      data: [
-        {
-            id: 1,
-            name: '测试1',
-            imo: 'imo1',
-            cincllc: 'DWT',
-            tonnage: '171746',
-            sailed: '19804',
-            co2: '8444',
-            trend: '上',
-            attained: '2.48',
-            required: '2.55',
-            deviation: '-2.7',
-            arrained: 'C',
-            nextYear: 'C',
-            deterioration: 'D(2026)',
-        },
-        {
-            id: 2,
-            name: '测试2',
-            imo: 'imo1',
-            cincllc: 'DWT',
-            tonnage: '171746',
-            sailed: '19804',
-            co2: '8444',
-            trend: '下',
-            attained: '2.48',
-            required: '2.55',
-            deviation: '-2.7',
-            arrained: 'A',
-            nextYear: 'E',
-            deterioration: 'D(2026)',
-        }
-      ],
+      data: [],
       // 可选项
       columns,
       // 已选项
       selected: [],
-      condition: [
-        {
-          key: "船舶名称",
-          title: "name",
-          select: false,
-        },
-        {
-          key: "创建日期",
-          title: "date",
-          select: true,
-          times: true,
-          allowClears: true
-        },
-        {
-          key: '状态',
-          title: 'status',
-          select: true,
-          option:[
-            { value: 0, title: "冻结" },
-            { value: 1, title: "正常" },
-          ]
-        },
-      ],
+      condition: [],
       Inline: {},
-      buttonGroup: ["查询", "重置"],
+      buttonGroup: [],
       operationGroup: [
+        {
+          name: '切换为曲线',
+          title: 'channelBusiness',
+          disabled: false,
+        },
+        {
+          name: "IMO",
+          title: 'IMO',
+          vModels: '',
+          disabled: false,
+          select: true,
+          option: []
+        },
         {
           name: "显示方式",
           title: 'displayMode',
           disabled: false,
           select: true,
+          vModels: 0,
           option: [
             { value: 0, title: "航次" },
             { value: 1, title: "月" },
@@ -195,10 +169,13 @@ export default {
           ]
         },
         {
-          name: '切换为曲线',
-          title: 'channelBusiness',
-          disabled: false,
-        },
+            name: "ship",
+            title: 'ship',
+            vModels: '',
+            disabled: false,
+            select: true,
+            option: []
+        }
       ],
       // 分页
       pagination: {
@@ -211,10 +188,10 @@ export default {
         showQuickJumper: true,
         onShowSizeChange: (current, pageSize) => {
           this.switchpage(current, pageSize);
-        }, // 改变每页数量时更新显示
+        },
         onChange: (page, pageSize) => {
           this.switchpage(page, pageSize);
-        }, //点击页码事件
+        },
       },
       // 渲染数据条件
       listArr: {},
@@ -245,22 +222,39 @@ export default {
   },
   watch: {},
   created() {
+    this.lists()
   },
   methods: {
     async lists() {
+      let arrs = await pagingShipping({ query: "" });
+      this.operationGroup[1].option = (arrs || []).map(item => {
+        return {value: item.id, title: item.IMO}
+      })
+      this.operationGroup[1].vModels = arrs ? arrs[0].id : ''
       // let belong = JSON.stringify(this.roleid) ? JSON.parse(JSON.stringify(this.roleid)) : {}
       this.listArr = {
-        size: 10,
-        current: 1,
+        pagesize: 10,
+        pagenum: 1,
+        IMO: this.operationGroup[1].vModels,
+        displayMode: this.operationGroup[2].vModels
       };
       this.everytimes();
-      await channelBusiness(this.listArr)
+      this.calculation();
+    },
+    async calculation() {
+      let arr = await pagingShipNo({ query: this.operationGroup[1].vModels });
+      this.operationGroup[3].option = (arr || []).map(item => {
+        return {value: item.id, title: item.Voyage}
+      })
+      this.operationGroup[3].vModels = arr ? arr[0]?.id : ''
+      this.listArr.VoyageId =this.operationGroup[3].vModels
+      await calculationPaging(this.listArr)
         .then((res) => {
-          const { data } = res;
-          this.data = this.handleData(data.records);
-          this.pagination.total = data.total;
-          this.pagination.pageSize = data.pageSize;
-          this.pagination.current = data.pageNum
+          this.data = res.data
+          this.pagination.total = res.totalpage;
+          this.pagination.pageSize = res.pagesize;
+          this.pagination.current = res.pagenum
+
         })
         .catch((err) => console.log(err));
     },
@@ -293,7 +287,16 @@ export default {
     // 业务组件
     businessGroup(row, e) {
       if (e == '切换为曲线') {
-        this.operationGroup[1].name = '切换为表格'
+        this.operationGroup[0].name = '切换为表格'
+      }
+      if (e == 'IMO') {
+        this.listArr.IMO = row
+        this.calculation();
+      }
+      if (e == 'displayMode') {
+        this.listArr.displayMode = row
+        this.calculation();
+        console.log(row, e);
       }
     },
     // ListOperation
@@ -319,10 +322,10 @@ export default {
     async switchpage(current, pageSize) {
       this.listArr.current = current;
       this.listArr.size = pageSize;
-      await channelBusiness(this.listArr)
+      await calculationPaging(this.listArr)
         .then((res) => {
           const { data } = res;
-          this.data = this.handleData(data.records);
+          this.data = data.records
           this.pagination.total = data.total;
           this.pagination.pageSize = data.pageSize;
           this.pagination.current = data.pageNum
@@ -342,18 +345,6 @@ export default {
       } else if (e.status === 0) {
         console.log(e);
       }
-    },
-    // 处理data数据
-    handleData(e) {
-      let arr = this.$XHCopy(e);
-      arr.forEach(item => {
-        if (item.status == 1) {
-          item.statuss = '正常'
-        } else if (item.status == 0) {
-          item.statuss = '冻结'
-        }
-      })
-      return arr;
     },
     everytimes() {
       this.listArr.createTimeStartTime = "";
