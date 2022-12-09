@@ -27,40 +27,24 @@
       </div>
       <div class="parameter">
         <div class="content">
-          <h4>类型 ： </h4>
-          <p>VLCC</p>
+          <h4>IMO ： </h4>
+          <p>{{itemSailing.IMO}}</p>
         </div>
         <div class="content">
-          <h4>DWT(ton) ： </h4>
-          <p>318689</p>
+          <h4>HFO ： </h4>
+          <p>{{itemSailing.vModelData.HFO}}</p>
         </div>
         <div class="content">
-          <h4>LOA(m) ： </h4>
-          <p>332.95</p>
-        </div>
-        <div class="content">
-          <h4>LPP(m) ： </h4>
-          <p>323.6</p>
-        </div>
-        <div class="content">
-          <h4>B(m) ： </h4>
-          <p>60</p>
-        </div>
-        <div class="content">
-          <h4>D(m) ： </h4>
-          <p>20.5</p>
-        </div>
-        <div class="content">
-          <h4>V（kn) ： </h4>
-          <p>15.7</p>
+          <h4>LFO ： </h4>
+          <p>{{itemSailing.vModelData.LFO}}</p>
         </div>
         <div class="content">
           <h4>船厂 ： </h4>
-          <p>大连船厂</p>
+          <p>测试船厂</p>
         </div>
         <div class="content">
           <h4>建造年份 ： </h4>
-          <p>2017</p>
+          <p>2017年</p>
         </div>
       </div>
     </div>
@@ -74,10 +58,17 @@
 </template>
 <script>
 import { init } from 'echarts';
-import echartsDt from './one'
 // import Condition from "@/components/table/condition.jsx";
 export default {
   name: "echarts",
+  props: {
+    datas: {
+      type: Array
+    },
+    itemSailing: {
+      type: Object
+    },
+  },
   data() {
     return {
       condition: [
@@ -107,18 +98,13 @@ export default {
       buttonGroup: ["查询", "重置"],
       // 已选项
       selected: [],
-      uname: ''
+      uname: '',
     };
   },
   components: {
     // Condition,
   },
   watch: {
-    // '$route.params.name'() {
-    //   if (this.$route.params.name) {
-    //     console.log(this.$route.params.name);
-    //   }
-    // },
   },
   mounted() {
     this.chartgauges()
@@ -126,14 +112,30 @@ export default {
   },
   methods: {
     chartgauges() {
-      console.log(new Date(43832 + 1640966400000).getDate());
+      console.log(this.datas);
+      let xAxisDt = []
+      let attainedCII = []
+      let requiredCll = []
+      let superiorBoundary = []
+      let lowerBoundary = []
+      let upperBoundary = []
+      let inferiorBoundary =[]
+      this.datas.forEach(item => {
+        xAxisDt.push(item.Date_UTC)
+        attainedCII.push(item.AttainedCII)
+        requiredCll.push(item.RequiredCII)
+        superiorBoundary.push(item.superiorBoundary)
+        lowerBoundary.push(item.lowerBoundary)
+        upperBoundary.push(item.upperBoundary)
+        inferiorBoundary.push(item.inferiorBoundary)
+      })
       // const chartEle = document.getElementById('chart');
       const chart = init(document.getElementById('chart'));
       const option =  {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: echartsDt.xAxisDt
+          data: xAxisDt
         },
         yAxis: {
           type: 'value',
@@ -190,7 +192,7 @@ export default {
         series: [
           {
             name: 'attainedCII',
-            data: echartsDt.attainedCII,
+            data: attainedCII,
             type: 'line',
             showSymbol: false,
             // areaStyle: {
@@ -228,7 +230,7 @@ export default {
           },
           {
             name: 'requiredCll',
-            data: echartsDt.requiredCll,
+            data: requiredCll,
             type: 'line',
             showSymbol: false,
             itemStyle: {
@@ -249,7 +251,7 @@ export default {
           // superiorBoundary,
           {
             name: 'superiorBoundary',
-            data: echartsDt.superiorBoundary,
+            data: superiorBoundary,
             type: 'line',
             showSymbol: false,
             itemStyle: {
@@ -269,7 +271,7 @@ export default {
           // lowerBoundary
           {
             name: 'lowerBoundary',
-            data: echartsDt.lowerBoundary,
+            data: lowerBoundary,
             type: 'line',
             showSymbol: false,
             itemStyle: {
@@ -288,7 +290,7 @@ export default {
           // upperBoundary
           {
             name: 'upperBoundary',
-            data: echartsDt.upperBoundary,
+            data: upperBoundary,
             type: 'line',
             showSymbol: false,
             itemStyle: {
@@ -308,7 +310,7 @@ export default {
           // inferiorBoundary
           {
             name: 'inferiorBoundary',
-            data: echartsDt.inferiorBoundary,
+            data: inferiorBoundary,
             type: 'line',
             showSymbol: false,
             itemStyle: {

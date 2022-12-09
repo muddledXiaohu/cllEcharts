@@ -209,10 +209,10 @@
                 <a-form-item :label="`${item.name}油耗(升)`">
                   <span class="parameter">
                     {{
-                      surplusvModelData[item.label] -
+                      surplusvModelData[item.label] ? surplusvModelData[item.label]-
                       (handleSubmitForm.getFieldValue(item.label)
                         ? Number(handleSubmitForm.getFieldValue(item.label))
-                        : 0)
+                        : 0):'请选择航次号'
                     }}
                   </span>
                 </a-form-item>
@@ -523,7 +523,7 @@ export default {
       this.cllOptions = [];
       arrs = arrs || [];
       this.shopId = arrs[0]?.id;
-      this.shipInformation = arrs[0];
+      this.shipInformation = arrs[0]||{};
       this.vModelData = [];
       this.cllOptions = arrs.map((item) => {
         let array = {};
@@ -587,7 +587,7 @@ export default {
       let res = await aimYesterday({});
       const d1 = new Date(`${res.data.Date_UTC} : ${res.data.Time_UTC}`);
       const d2 = new Date();
-      this.Time_Since_Previous_Report = ((parseInt(d2 - d1) / 1000 / 60)||24).toFixed(
+      this.Time_Since_Previous_Report = ((parseInt(d2 - d1) / 1000 / 60/60)||24).toFixed(
         1
       );
       let shipNos = await shipNoYesterday()
@@ -727,9 +727,9 @@ export default {
       let arr = e;
       arr.beginTime = moment(arr.beginTime).format("YYYY-MM-DD");
       arr.endTime = moment(arr.endTime).format("YYYY-MM-DD");
-      arr.IMO = this.shipInformation.IMO;
-      arr.shopId = this.shipInformation.id;
-      arr.surplusvModelData = this.shipInformation.vModelData;
+      arr.IMO = this.shipInformation?.IMO;
+      arr.shopId = this.shipInformation?.id;
+      arr.surplusvModelData = this.shipInformation?.vModelData;
       let res = await createShipNo(arr);
       if (res.start !== 200) return this.$message.error("错误");
       this.$message.success("航次号创建成功!");
@@ -784,8 +784,8 @@ export default {
       let shipArr = this.cllOptions.filter((it) => {
         return it.value === e;
       });
-      this.shipInformation.IMO = shipArr[0].label;
-      this.shipInformation.id = shipArr[0].value;
+      this.shipInformation.IMO = shipArr[0]?.label;
+      this.shipInformation.id = shipArr[0]?.value;
       this.voyageNbs();
     },
 
@@ -822,15 +822,17 @@ export default {
       });
     },
     modify() {
-      for (const key in this.shipInformation.vModelData) {
-        let arr = {
-          HFO_ROB: this.shipInformation.vModelData[key],
-          label: key,
-        };
-        arr.name = this.fuelType.filter((item) => {
-          return item.value == key;
-        })[0].label;
-        this.vModelData.push(arr);
+      if (this.shipInformation?.vModelData) {
+        for (const key in this.shipInformation.vModelData) {
+          let arr = {
+            HFO_ROB: this.shipInformation.vModelData[key],
+            label: key,
+          };
+          arr.name = this.fuelType.filter((item) => {
+            return item.value == key;
+          })[0].label;
+          this.vModelData.push(arr);
+        }
       }
     },
     // 搜索功能

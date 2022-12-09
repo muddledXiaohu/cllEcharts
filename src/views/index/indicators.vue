@@ -28,8 +28,50 @@
         <a-button type="primary" @click="operationGroup[0].name = '切换为曲线'">
           切换为表格
         </a-button>
+        <a-select
+          v-model="operationGroup[1].vModels"
+          style="width: 120px" 
+          @change="businessGroup(operationGroup[1].vModels,'IMO')">
+          <a-select-option
+             v-for="(it, idx) in operationGroup[1].option"
+            :key="idx"
+            :value="it.value"
+            :title="it.title"
+          >
+            {{it.title}}
+          </a-select-option>
+        </a-select>
+        <a-select
+          v-model="operationGroup[2].vModels"
+          style="width: 120px" 
+          @change="businessGroup(operationGroup[2].vModels,'displayMode')">
+          <a-select-option
+             v-for="(it, idx) in operationGroup[2].option"
+            :key="idx"
+            :value="it.value"
+            :title="it.title"
+          >
+            {{it.title}}
+          </a-select-option>
+        </a-select>
+        <a-select
+          v-model="operationGroup[3].vModels"
+          style="width: 120px" 
+          @change="businessGroup(operationGroup[3].vModels,'ship')">
+          <a-select-option
+             v-for="(it, idx) in operationGroup[3].option"
+            :key="idx"
+            :value="it.value"
+            :title="it.title"
+          >
+            {{it.title}}
+          </a-select-option>
+        </a-select>
       </div>
-      <Chart />
+      <Chart
+      :itemSailing="itemSailing"
+      :datas="data"
+      />
     </div>
   </div>
 </template>
@@ -90,11 +132,11 @@ const columns = [
     title: "Attained CII",
     dataIndex: "AttainedCII",
   },
-  // {
-  //   title: "cll Trend(3 adys-avg)",
-  //   dataIndex: "trend",
-  //   scopedSlots: { customRender: "cllTrend" },
-  // },
+  {
+    title: "cll Trend(3 adys-avg)",
+    dataIndex: "performance",
+    scopedSlots: { customRender: "cllTrend" },
+  },
   // {
   //   title: 'Cll(gCO2/(nm * mt))',
   //   children: [
@@ -112,11 +154,11 @@ const columns = [
   //   title: "Deviation in %",
   //   dataIndex: "deviation",
   // },
-  // {
-  //   title: "Arrained Rating YTD",
-  //   dataIndex: "arrained",
-  //   scopedSlots: { customRender: "tagging" },
-  // },
+  {
+    title: "Arrained Rating YTD",
+    dataIndex: "boundary",
+    scopedSlots: { customRender: "tagging" },
+  },
   // {
   //   title: "Projected Rating next year",
   //   dataIndex: "nextYear",
@@ -213,7 +255,8 @@ export default {
       ],
       // 新建页显隐
       masterAccountVisible: false,
-      OperationName: ''
+      OperationName: '',
+      itemSailing: {}
     };
   },
   components: {
@@ -228,8 +271,11 @@ export default {
     async lists() {
       let arrs = await pagingShipping({ query: "" });
       this.operationGroup[1].option = (arrs || []).map(item => {
-        return {value: item.id, title: item.IMO}
+        item.value = item.id
+        item.title = item.IMO
+        return item
       })
+      this.itemSailing = this.operationGroup[1].option[0]
       this.operationGroup[1].vModels = arrs ? arrs[0].id : ''
       // let belong = JSON.stringify(this.roleid) ? JSON.parse(JSON.stringify(this.roleid)) : {}
       this.listArr = {
@@ -292,11 +338,11 @@ export default {
       if (e == 'IMO') {
         this.listArr.IMO = row
         this.calculation();
+        this.itemSailing=this.operationGroup[1].option.filter(item=>{return item.id===row})[0]
       }
       if (e == 'displayMode') {
         this.listArr.displayMode = row
         this.calculation();
-        console.log(row, e);
       }
     },
     // ListOperation
@@ -340,11 +386,6 @@ export default {
     async permissionDelete(e) {
       // 冻结
       console.log(e);
-      if (e.status === 1) {
-        console.log(e);
-      } else if (e.status === 0) {
-        console.log(e);
-      }
     },
     everytimes() {
       this.listArr.createTimeStartTime = "";

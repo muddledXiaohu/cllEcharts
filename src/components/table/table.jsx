@@ -284,7 +284,6 @@ export default {
                     placeholder='请选择'
                     style="margin: 0 6px;width: 140px;"
                     show-search
-                    allowClear
                     not-found-content={null}
                     onChange={(value)=> {this.displayMode(value, item.title)}}
                     >
