@@ -26,7 +26,7 @@ const passageway = {
   // 启用通道
   recoverChannel: 'channel/recover',
   // 数据分页
-  calculationPaging: 'calculation/paging'
+  calculationPaging: 'CIICalculation/paging'
 }
 // 查询通道商列表
 export function channelBusiness (parameter) {

@@ -3,6 +3,8 @@ import request from '@/utils/request'
 const passageway = {
   // 新建行程数据
   createAim: 'aim/create',
+  // aim查询
+  aimQueryPaging:'aimQuery/paging',
   // 查询最新最后数据
   aimYester: 'aimYester',
   // 查询前天的数据
@@ -17,6 +19,10 @@ const passageway = {
   pagingShipNo: 'shipNo/paging',
   // 创建船舶
   createShipping: 'shipping/create',
+  // 修改
+  modifyShipping: 'shipping/modify',
+  // 修改位置
+  forModifyShipping: 'shipping/forModify',
   // 查询船舶
   pagingShipping: 'shipping/paging',
   // 查询船舶分页
@@ -36,6 +42,14 @@ const passageway = {
 export function createAim (parameter) {
   return request({
     url: passageway.createAim,
+    method: 'POST',
+    data: parameter
+  })
+}
+// aim查询
+export function aimQueryPaging (parameter) {
+  return request({
+    url: passageway.aimQueryPaging,
     method: 'POST',
     data: parameter
   })
@@ -92,6 +106,22 @@ export function pagingShipNo (parameter) {
 export function createShipping (parameter) {
   return request({
     url: passageway.createShipping,
+    method: 'POST',
+    data: parameter
+  })
+}
+// 修改船舶
+export function modifyShipping(parameter) {
+  return request({
+    url: passageway.modifyShipping,
+    method: 'POST',
+    data: parameter
+  })
+}
+// 修改位置
+export function forModifyShipping(parameter) {
+  return request({
+    url: passageway.forModifyShipping,
     method: 'POST',
     data: parameter
   })

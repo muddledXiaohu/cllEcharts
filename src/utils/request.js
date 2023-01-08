@@ -19,12 +19,12 @@ const request = axios.create({
     timeout: 60000
   })
   // 
-  // request.defaults.baseURL = 'http://47.93.241.39:5000/'
+  request.defaults.baseURL = 'http://47.93.241.39:5000/'
   // request.defaults.baseURL = 'http://192.168.1.134/crm/'
   // request.defaults.baseURL = 'http://192.168.1.41/crm'
   // request.defaults.baseURL = 'https://oa.wxxsxx.com/crm/'
   // document
-  request.defaults.baseURL = '/apis/'
+  // request.defaults.baseURL = '/apis/'
 
   // 异常拦截处理器
 const errorHandler = (error) => {

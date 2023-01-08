@@ -60,6 +60,18 @@ export const asyncRouterMap = [
         meta: { title: 'digitalForm' }
       },
       {
+        path: 'newFormVisible',
+        name: 'newFormVisible',
+        component: () => import(/* webpackChunkName: "newFormVisible" */ '@/views/index/newFormVisible'),
+        meta: { title: 'newFormVisible' }
+      },
+      {
+        path: 'shipCreate',
+        name: 'shipCreate',
+        component: () => import(/* webpackChunkName: "shipCreate" */ '@/views/index/components/shipCreate'),
+        meta: { title: 'shipCreate' }
+      },
+      {
         path: 'demo',
         name: 'demo',
         component: () => import(/* webpackChunkName: "demo" */ '@/views/index/demo'),
@@ -82,6 +94,12 @@ export const asyncRouterMap = [
         name: 'sailingTable',
         component: () => import(/* webpackChunkName: "sailingTable" */ '@/views/index/sailingTable'),
         meta: { title: 'sailingTable' }
+      },
+      {
+        path: 'CIICalculation',
+        name: 'CIICalculation',
+        component: () => import(/* webpackChunkName: "CIICalculation" */ '@/views/CIIModules/CIICalculation'),
+        meta: { title: 'CIICalculation' }
       },
     ]
   },

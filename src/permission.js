@@ -15,7 +15,7 @@ router.beforeEach((to, from, next) => {
         NProgress.done()
       } else {
         if (store.getters.roles.length == 0) {
-          console.log(123);
+          console.log(1111);
         } else {
           next()
         }

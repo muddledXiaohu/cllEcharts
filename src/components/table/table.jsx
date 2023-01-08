@@ -11,6 +11,7 @@
 // ListOperation表单数据点击事件（customRender==id）
 import HTransfer from "./Transfer";
 import moment from 'moment';
+import {vesselType} from '@/views/index/components/data'
 // import {  ACCESS_ROLEID } from '@/store/mutation-types'
 // import storage from 'store'
 export default {
@@ -86,9 +87,13 @@ export default {
     permit: {
       type: String
     },
+    indexId: {
+      type: Boolean
+    }
   },
   data() {
     return {
+      vesselType,
       selectedRowKeys: [],
       loading: false,
       formInline: {},
@@ -100,7 +105,12 @@ export default {
       createValue: [],
       jurisdiction: 'color: #ccc;',
       shortcutKeySize: -1,
-      accessRoleid: {}
+      accessRoleid: {},
+      modifyIdx: 999999,
+      // 数据拖拽的table
+      mobileData:{},
+      // 点击拖拽下标位置
+      subscript:0
     };
   },
   render() {
@@ -110,6 +120,17 @@ export default {
         return (
           <a  {...{ on: { click: () => { this.EachItem('name', EachItems) } } }}>{title}</a>
         );
+      },
+      index: (title, EachItems, index) => {
+        return index+1;
+      },
+      models: (title) => {
+        let models = ''
+        if (title) {
+          const modeleName = this.vesselType.filter(item =>{return item.value== title})[0]
+          models =modeleName.label
+        }
+        return models;
       },
       number: (title, EachItems) => {
         return (
@@ -167,6 +188,23 @@ export default {
           })
         );
       },
+      operations: (title, EachItems) => {
+        return (
+          <span>
+            <a style="margin: 0 10px;" onClick={() => {this.operationClick('operations','修改', EachItems)}}>修改</a>
+            <a onClick={() => {this.operationClick('operations','运营数据管理', EachItems)}}>运营数据管理</a>
+          </span>
+        )
+      },
+      operationLook: (title, EachItems) => {
+        console.log(EachItems);
+        return (
+          <span>
+            <a style="margin: 0 10px;" onClick={()=>{this.CIICalculation('详细情况', EachItems)}}>详细情况</a>
+            <a onClick={()=>{this.CIICalculation('切换为曲轴', EachItems)}}>切换为曲轴</a>
+          </span>
+        )
+      },
       /**
        * 
        * @name cllTrend上下标签
@@ -181,15 +219,32 @@ export default {
        * @name tagging标签化
        */
        tagging: (title) => {
-         let colors = title.includes('A') ? 'background-color: #66ad6b' :
-           title.includes('B') ? 'background-color: #bfda73' :
-           title.includes('C') ? 'background-color: #ffe37d' :
-           title.includes('D') ? 'background-color: #f6a057' : 'background-color: #e37574';
+         let colors = title?.includes('A') ? 'background-color: #66ad6b' :
+           title?.includes('B') ? 'background-color: #bfda73' :
+           title?.includes('C') ? 'background-color: #ffe37d' :
+           title?.includes('D') ? 'background-color: #f6a057' : 'background-color: #e37574';
          return (
           <div class="taggings" style={colors}>
             <p>{title}</p>
           </div>)
-       }
+      },
+      Latitude_Degree: (title, EachItems) => {
+        return <div>
+          {EachItems.Latitude_North_South.slice(0, 1)}
+          {EachItems.Latitude_Degree}°
+          {EachItems.Latitude_Minutes}′
+        </div>
+      },
+      IMO: (title, EachItems) => {
+        return <a onClick={()=>{this.tbhandleTableIMO(EachItems)}}>{title}</a>
+      },
+      Longitude_Degree: (title, EachItems) => {
+        return <div>
+          {EachItems.Longitude_East_West.slice(0, 1)}
+          {EachItems.Longitude_Degree}°
+          {EachItems.Longitude_Minutes}′
+        </div>
+      }
     }
     // form每一项
     let panes = null
@@ -333,11 +388,42 @@ export default {
           {...{ scopedSlots }}
           row-selection={this.operationGroup && this.operationGroup.length != 0 && this.haveSelection ? this.rowSelection : null}
           pagination={this.pagination != undefined && this.pagination}
-          rowKey="id"
+          rowKey={this.indexId?'indexId':'id'}
           class="hwGTable"
           scroll={this.scrollWidth? this.scrollWidth:{}}
           title={() => HoperationGroup}
           onChange={this.handleTableChange}
+          row-class-name={(_record, index) => (index % 2 === 1 ? 'table-striped' : null)}
+
+        customRow={(record, index) => {
+          return {
+            on: {
+              mouseenter: (event) => {
+                const ev = event || window.event
+                ev.target.draggable = true
+              },
+              dragstart: (event) => {
+                const ev = event || window.event
+                ev.stopPropagation()
+                this.mobileData = record
+                this.subscript = index
+              },
+              dragover: (event) => {
+                const ev = event || window.event
+                ev.preventDefault()
+              },
+              drop: (event) => {
+                const ev = event || window.event
+                ev.stopPropagation()
+                this.mobileData = record
+                let data2 = this.data.filter(item=>item.id === this.mobileData.id)
+                let data3 = this.data.filter(item=>item.id !== this.mobileData.id)
+                data3.splice(this.subscript, 0, ...data2)
+                this.adjustment(data3)
+              }
+            },
+          };
+        }}
         >
           <span slot="Transfer"
             {...{ on: { click: () => { this.SelectData() } } }}>
@@ -477,12 +563,11 @@ export default {
     },
     // table每项scopedSlots==id数据点击事件
     EachItem(a, EachItems) {
-      console.log(EachItems, a);
       this.$emit('ListOperation', EachItems, a) // 传函数给父组件
     },
     // 权限按钮点击事件
-    operationClick(a, title) {
-      this.$emit(a, title)
+    operationClick(a, title, EachItems) {
+      this.$emit(a, title, EachItems)
     },
     // 取消
     cancel () {
@@ -500,7 +585,35 @@ export default {
       this.$emit('tbFilterOption', input) // 传函数给父组件
     },
     channelBusiness (input, key) {
-      this.$emit('tbchannelBusiness', input, key) // 传函数给父组件
+      this.$emit('tbchannelBusiness', input, key)
+    },
+    /**
+     *
+     * @description: cll计算点击事件
+     */
+    CIICalculation(i, item) {
+      this.$emit('CIICalculations', i,item)
+    },
+    //拖拽
+    /**
+     *
+     * @description: 双击table进行修改操作
+     */
+     dblCk (record, rowkey) {
+      this.modifyIdx = record;
+      console.log(record, rowkey);
+    },
+     async adjustment(data) {
+      let arr = data.map((item, idx) => {
+        let array = item
+        array.indexId = idx+1
+        if (item.id) {
+          array.id = item.id
+        }
+        return array
+      })
+      this.$emit('switchPosition', arr)
+      
     },
     // 获取当前开始时间
     currentStartTime () {
@@ -642,6 +755,9 @@ export default {
     handleTableChange (pagination, filters, sorter) {
       // console.log(pagination, filters, sorter);
       this.$emit('tbhandleTableChange', sorter.order || '') // 传函数给父组件
+    },
+    tbhandleTableIMO (pagination) {
+      this.$emit('tbhandleTableIMO', pagination)
     }
   },
   computed: {

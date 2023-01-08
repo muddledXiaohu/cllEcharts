@@ -19,12 +19,12 @@ export default {
     };
   },
   render() {
-    let tbData = this.data.map(item => {
+    let tbData = (this.data||[]).map(item => {
        return {name: item}
     })
       const scopedSlots = {
         uname: (title) => {
-            const name = this.fuelType.filter(it => {return it.value === title.name})[0].label
+            const name = this.fuelType?.filter(it => {return it.value === title.name})[0].label
             return (
                 name
             );
